@@ -239,7 +239,7 @@
       font-weight: normal;
     }
 
-    /* LƯỚI ĐIỀU KHIỂN TINH GỌN */
+    /* LƯỚI ĐIỀU KHIỂN */
     .settings-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -263,6 +263,10 @@
       border-radius: 0.4rem;
       padding: 0.75rem;
       min-width: 0;
+    }
+
+    .setting-group-full {
+      grid-column: 1 / -1;
     }
 
     .group-disabled {
@@ -490,15 +494,10 @@
       border-radius: 0.3rem;
       border: 2px solid var(--color-border);
       background-color: var(--color-black);
-      cursor: default;
-    }
-
-    .file-thumbnail.thumbnail-inspectable {
       cursor: pointer;
-      border-color: var(--color-primary);
     }
 
-    .file-thumbnail.thumbnail-inspectable:hover {
+    .file-thumbnail:hover {
       border-color: var(--color-accent);
     }
 
@@ -758,7 +757,7 @@
       </div>
 
       <!-- 3. KÍCH THƯỚC XUẤT -->
-      <div class="setting-group" style="grid-column: 1 / -1;">
+      <div class="setting-group setting-group-full">
         <div class="setting-label">3. Kích thước ảnh xuất</div>
         <div class="radio-pill-group">
           <label class="radio-pill-label">
@@ -851,13 +850,13 @@
 
       <div class="inspector-controls">
         <!-- NÚT DUY NHẤT: ẢNH GỐC / ẢNH NÉN -->
-        <button type="button" class="btn-toggle-compare" id="btnToggleCompare" title="Bấm để chuyển đổi qua lại giữa Ảnh Gốc và Ảnh Nén">
+        <button type="button" class="btn-toggle-compare" id="btnToggleCompare" title="Phím Space để đổi nhanh">
           <span id="labelCompressed" class="compare-label-active">Ảnh Nén</span>
           <span class="compare-slash">/</span>
           <span id="labelOriginal" class="compare-label-inactive">Ảnh Gốc</span>
         </button>
 
-        <!-- CÁC MỨC ZOOM -->
+        <!-- CÁC MỨC ZOOM VẬT LÝ -->
         <button type="button" class="preset-btn active" data-phys-zoom="1">100%</button>
         <button type="button" class="preset-btn" data-phys-zoom="2">200%</button>
         <button type="button" class="preset-btn" data-phys-zoom="4">400%</button>
@@ -899,6 +898,16 @@
         startX: 0,
         startY: 0
       }
+    };
+
+    const touchState = {
+      pointers: new Map(),
+      initialDist: 0,
+      initialZoom: 1.0,
+      initialPanX: 0,
+      initialPanY: 0,
+      initialMidX: 0,
+      initialMidY: 0
     };
 
     const dropZone = document.getElementById('dropZone');
@@ -1190,12 +1199,10 @@
         }
 
         const isCompleted = (item.status === 'completed');
-        const thumbClass = isCompleted ? 'file-thumbnail thumbnail-inspectable' : 'file-thumbnail';
-        const thumbTitle = isCompleted ? 'Bấm vào ảnh để soi chi tiết' : 'Chờ nén xong để soi chi tiết';
-        const thumbClick = isCompleted ? `onclick="openInspector('${item.id}')"` : '';
+        const thumbTitle = isCompleted ? 'Bấm để soi chi tiết ảnh nén và ảnh gốc' : 'Bấm để soi chi tiết ảnh gốc';
 
         card.innerHTML = `
-          <img src="${item.originalUrl}" class="${thumbClass}" alt="Thumbnail" title="${thumbTitle}" ${thumbClick}>
+          <img src="${item.originalUrl}" class="file-thumbnail" alt="Thumbnail" title="${thumbTitle}" onclick="openInspector('${item.id}')">
           <div class="file-details">
             <div class="file-name">${escapeHtml(item.originalName)}</div>
             <div class="file-meta-row">
@@ -1298,7 +1305,7 @@
           const percent = Math.round((completedCount / totalCount) * 100);
           progressBarFill.style.width = `${percent}%`;
           progressPercentText.textContent = `${percent}%`;
-          progressStatusText.textContent = `Đã hoàn thành ${completedCount} / ${totalCount} ảnh...`;
+          progressStatusText.textContent = `Đang hoàn thành ${completedCount} / ${totalCount} ảnh...`;
           renderFileList();
         }
       }
@@ -1309,8 +1316,23 @@
 
       await Promise.all(activeWorkers);
 
+      let totalOrigSize = 0;
+      let totalNewSize = 0;
+      state.items.forEach(i => {
+        if (i.status === 'completed' && i.convertedSize > 0) {
+          totalOrigSize += i.originalSize;
+          totalNewSize += i.convertedSize;
+        }
+      });
+
       state.isProcessing = false;
-      progressStatusText.textContent = `Chuyển đổi hoàn tất ${completedCount} ảnh!`;
+      if (totalOrigSize > 0 && totalNewSize > 0) {
+        const totalSaved = Math.max(0, ((totalOrigSize - totalNewSize) / totalOrigSize) * 100).toFixed(1);
+        progressStatusText.textContent = `Đã nén xong: ${formatBytes(totalOrigSize)} → ${formatBytes(totalNewSize)} (Tiết kiệm ${totalSaved}%)`;
+      } else {
+        progressStatusText.textContent = `Chuyển đổi hoàn tất ${completedCount} ảnh!`;
+      }
+
       updateUI();
       showToast(`Chuyển đổi thành công ${completedCount} ảnh!`);
     });
@@ -1331,6 +1353,14 @@
         }
       }
 
+      const MAX_SAFE_PIXELS = 36000000;
+      const totalPix = outWidth * outHeight;
+      if (totalPix > MAX_SAFE_PIXELS) {
+        const scaleDown = Math.sqrt(MAX_SAFE_PIXELS / totalPix);
+        outWidth = Math.max(1, Math.round(outWidth * scaleDown));
+        outHeight = Math.max(1, Math.round(outHeight * scaleDown));
+      }
+
       const canvas = document.createElement('canvas');
       canvas.width = outWidth;
       canvas.height = outHeight;
@@ -1340,13 +1370,11 @@
         willReadFrequently: false
       });
 
-      // Tự động lót nền trắng tinh khiết nếu xuất JPG
       if (options.targetFormat === 'image/jpeg') {
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, 0, outWidth, outHeight);
       }
 
-      // Luôn áp dụng thuật toán Bicubic mượt nét cao nhất
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
@@ -1371,7 +1399,6 @@
         }, options.targetFormat, options.quality);
       });
 
-      // Tự động khảm và chuẩn hoá EXIF ngầm cho JPG
       if (options.targetFormat === 'image/jpeg') {
         try {
           convertedBlob = await tryInjectExif(item.file, convertedBlob, options.targetFormat);
@@ -1468,7 +1495,7 @@
           currentPos += 12;
         }
       } catch (e) {
-        console.warn('Bỏ qua chuẩn hoá hướng EXIF:', e);
+        console.warn('Bỏ qua chuẩn hoá hướng EXIF do dữ liệu không tiêu chuẩn:', e);
       }
     }
 
@@ -1515,20 +1542,18 @@
     // 14. BỘ CÔNG CỤ SOI CHI TIẾT
     window.openInspector = function(id) {
       const item = state.items.find(i => i.id === id);
-      if (!item || !item.convertedUrl) return;
+      if (!item) return;
 
       state.inspector.activeItem = item;
-      state.inspector.viewMode = 'converted';
+      state.inspector.viewMode = item.convertedUrl ? 'converted' : 'original';
 
       const dpr = window.devicePixelRatio || 1;
-      state.inspector.zoom = 1.0 / dpr; // 100% Pixel thật vật lý
+      state.inspector.zoom = 1.0 / dpr;
 
       modalFileName.textContent = item.originalName;
       updateCompareButtonUI();
 
-      document.querySelectorAll('.inspector-controls .preset-btn[data-phys-zoom]').forEach(b => b.classList.remove('active'));
-      const defaultZoomBtn = document.querySelector('.inspector-controls .preset-btn[data-phys-zoom="1"]');
-      if (defaultZoomBtn) defaultZoomBtn.classList.add('active');
+      updatePresetButtonsUI(1.0 / dpr);
 
       fullscreenInspectorModal.classList.add('active');
       renderInspectorImage(true);
@@ -1536,12 +1561,25 @@
 
     btnToggleCompare.addEventListener('click', () => {
       if (!state.inspector.activeItem) return;
+      if (!state.inspector.activeItem.convertedUrl) {
+        showToast('Ảnh này chưa chuyển đổi nên chỉ có bản gốc!');
+        return;
+      }
       state.inspector.viewMode = (state.inspector.viewMode === 'converted') ? 'original' : 'converted';
       updateCompareButtonUI();
       renderInspectorImage(false);
     });
 
     function updateCompareButtonUI() {
+      const item = state.inspector.activeItem;
+      if (!item) return;
+
+      if (!item.convertedUrl) {
+        labelCompressed.className = 'compare-label-inactive';
+        labelOriginal.className = 'compare-label-active';
+        return;
+      }
+
       if (state.inspector.viewMode === 'converted') {
         labelCompressed.className = 'compare-label-active';
         labelOriginal.className = 'compare-label-inactive';
@@ -1555,7 +1593,7 @@
       const item = state.inspector.activeItem;
       if (!item) return;
 
-      const isConverted = (state.inspector.viewMode === 'converted');
+      const isConverted = (state.inspector.viewMode === 'converted' && item.convertedUrl);
       modalInspectorImage.src = isConverted ? item.convertedUrl : item.originalUrl;
 
       const curWidth = isConverted ? item.convertedWidth : item.originalWidth;
@@ -1595,11 +1633,20 @@
       }
     }
 
+    function updatePresetButtonsUI(currentZoom) {
+      const dpr = window.devicePixelRatio || 1;
+      document.querySelectorAll('.inspector-controls .preset-btn[data-phys-zoom]').forEach(b => {
+        const pz = parseFloat(b.getAttribute('data-phys-zoom'));
+        if (Math.abs((pz / dpr) - currentZoom) < 0.05) {
+          b.classList.add('active');
+        } else {
+          b.classList.remove('active');
+        }
+      });
+    }
+
     document.querySelectorAll('.inspector-controls .preset-btn[data-phys-zoom]').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.inspector-controls .preset-btn[data-phys-zoom]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
         const physMultiplier = parseFloat(btn.getAttribute('data-phys-zoom'));
         const dpr = window.devicePixelRatio || 1;
         const newZoom = physMultiplier / dpr;
@@ -1613,6 +1660,8 @@
           state.inspector.panX = centerX - (centerX - state.inspector.panX) * (newZoom / oldZoom);
           state.inspector.panY = centerY - (centerY - state.inspector.panY) * (newZoom / oldZoom);
           state.inspector.zoom = newZoom;
+
+          updatePresetButtonsUI(newZoom);
           applyInspectorTransform();
         }
       });
@@ -1621,39 +1670,102 @@
     btnResetPanZoom.addEventListener('click', () => {
       const item = state.inspector.activeItem;
       if (!item) return;
-      const isConverted = (state.inspector.viewMode === 'converted');
+      const isConverted = (state.inspector.viewMode === 'converted' && item.convertedUrl);
       const curWidth = isConverted ? item.convertedWidth : item.originalWidth;
       const curHeight = isConverted ? item.convertedHeight : item.originalHeight;
       centerImageInViewport(curWidth, curHeight);
     });
 
+    window.addEventListener('resize', () => {
+      if (fullscreenInspectorModal.classList.contains('active') && state.inspector.activeItem) {
+        const item = state.inspector.activeItem;
+        const isConverted = (state.inspector.viewMode === 'converted' && item.convertedUrl);
+        const curWidth = isConverted ? item.convertedWidth : item.originalWidth;
+        const curHeight = isConverted ? item.convertedHeight : item.originalHeight;
+        centerImageInViewport(curWidth, curHeight);
+      }
+    });
+
+    /* ==========================================================================
+       XỬ LÝ CẢM ỨNG ĐA ĐIỂM & CHUỘT
+       ========================================================================== */
     modalViewport.addEventListener('pointerdown', (e) => {
-      state.inspector.isPanning = true;
-      state.inspector.startX = e.clientX - state.inspector.panX;
-      state.inspector.startY = e.clientY - state.inspector.panY;
-      modalViewport.classList.add('grabbing');
+      touchState.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
       modalViewport.setPointerCapture(e.pointerId);
+
+      if (touchState.pointers.size === 1) {
+        state.inspector.isPanning = true;
+        state.inspector.startX = e.clientX - state.inspector.panX;
+        state.inspector.startY = e.clientY - state.inspector.panY;
+        modalViewport.classList.add('grabbing');
+      } else if (touchState.pointers.size === 2) {
+        state.inspector.isPanning = false;
+        const pts = Array.from(touchState.pointers.values());
+        touchState.initialDist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+
+        const rect = modalViewport.getBoundingClientRect();
+        touchState.initialMidX = (pts[0].x + pts[1].x) / 2 - rect.left;
+        touchState.initialMidY = (pts[0].y + pts[1].y) / 2 - rect.top;
+
+        touchState.initialZoom = state.inspector.zoom;
+        touchState.initialPanX = state.inspector.panX;
+        touchState.initialPanY = state.inspector.panY;
+      }
     });
 
     modalViewport.addEventListener('pointermove', (e) => {
-      if (!state.inspector.isPanning) return;
-      state.inspector.panX = e.clientX - state.inspector.startX;
-      state.inspector.panY = e.clientY - state.inspector.startY;
-      applyInspectorTransform();
+      if (!touchState.pointers.has(e.pointerId)) return;
+      touchState.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (touchState.pointers.size === 1 && state.inspector.isPanning) {
+        state.inspector.panX = e.clientX - state.inspector.startX;
+        state.inspector.panY = e.clientY - state.inspector.startY;
+        applyInspectorTransform();
+      } else if (touchState.pointers.size >= 2 && touchState.initialDist > 0) {
+        const pts = Array.from(touchState.pointers.values());
+        const currentDist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+        if (currentDist === 0) return;
+
+        const dpr = window.devicePixelRatio || 1;
+        const scaleFactor = currentDist / touchState.initialDist;
+        const newZoom = Math.max(0.1 / dpr, Math.min(touchState.initialZoom * scaleFactor, 32.0 / dpr));
+
+        const rect = modalViewport.getBoundingClientRect();
+        const currentMidX = (pts[0].x + pts[1].x) / 2 - rect.left;
+        const currentMidY = (pts[0].y + pts[1].y) / 2 - rect.top;
+
+        const imgX = (touchState.initialMidX - touchState.initialPanX) / touchState.initialZoom;
+        const imgY = (touchState.initialMidY - touchState.initialPanY) / touchState.initialZoom;
+
+        state.inspector.panX = currentMidX - imgX * newZoom;
+        state.inspector.panY = currentMidY - imgY * newZoom;
+        state.inspector.zoom = newZoom;
+
+        updatePresetButtonsUI(newZoom);
+        applyInspectorTransform();
+      }
     });
 
-    function endPointerPan(e) {
-      if (state.inspector.isPanning) {
+    function endPointerInteraction(e) {
+      touchState.pointers.delete(e.pointerId);
+      try {
+        modalViewport.releasePointerCapture(e.pointerId);
+      } catch (err) {}
+
+      if (touchState.pointers.size === 1) {
+        const remaining = Array.from(touchState.pointers.values())[0];
+        state.inspector.isPanning = true;
+        state.inspector.startX = remaining.x - state.inspector.panX;
+        state.inspector.startY = remaining.y - state.inspector.panY;
+      } else if (touchState.pointers.size === 0) {
         state.inspector.isPanning = false;
         modalViewport.classList.remove('grabbing');
-        try {
-          modalViewport.releasePointerCapture(e.pointerId);
-        } catch (err) {}
+        touchState.initialDist = 0;
       }
     }
 
-    modalViewport.addEventListener('pointerup', endPointerPan);
-    modalViewport.addEventListener('pointercancel', endPointerPan);
+    modalViewport.addEventListener('pointerup', endPointerInteraction);
+    modalViewport.addEventListener('pointercancel', endPointerInteraction);
 
     // THUẬT TOÁN THU PHÓNG THEO CON TRỎ CHUỘT (ZOOM TO CURSOR)
     modalViewport.addEventListener('wheel', (e) => {
@@ -1674,15 +1786,7 @@
       state.inspector.panY = mouseY - (mouseY - state.inspector.panY) * (newZoom / oldZoom);
       state.inspector.zoom = newZoom;
 
-      document.querySelectorAll('.inspector-controls .preset-btn[data-phys-zoom]').forEach(b => {
-        const pz = parseFloat(b.getAttribute('data-phys-zoom'));
-        if (Math.abs((pz / dpr) - newZoom) < 0.01) {
-          b.classList.add('active');
-        } else {
-          b.classList.remove('active');
-        }
-      });
-
+      updatePresetButtonsUI(newZoom);
       applyInspectorTransform();
     }, { passive: false });
 
@@ -1690,12 +1794,41 @@
       fullscreenInspectorModal.classList.remove('active');
       modalInspectorImage.src = '';
       state.inspector.activeItem = null;
+      state.inspector.isPanning = false;
+      touchState.pointers.clear();
+      touchState.initialDist = 0;
     }
 
     btnCloseModal.addEventListener('click', closeModal);
+
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && fullscreenInspectorModal.classList.contains('active')) {
+      if (!fullscreenInspectorModal.classList.contains('active')) return;
+
+      if (e.key === 'Escape') {
         closeModal();
+      } else if (e.code === 'Space') {
+        e.preventDefault();
+        btnToggleCompare.click();
+      } else if (e.key === '=' || e.key === '+') {
+        e.preventDefault();
+        const dpr = window.devicePixelRatio || 1;
+        const newZoom = Math.min(state.inspector.zoom * 1.25, 32.0 / dpr);
+        const rect = modalViewport.getBoundingClientRect();
+        state.inspector.panX = (rect.width / 2) - ((rect.width / 2) - state.inspector.panX) * (newZoom / state.inspector.zoom);
+        state.inspector.panY = (rect.height / 2) - ((rect.height / 2) - state.inspector.panY) * (newZoom / state.inspector.zoom);
+        state.inspector.zoom = newZoom;
+        updatePresetButtonsUI(newZoom);
+        applyInspectorTransform();
+      } else if (e.key === '-' || e.key === '_') {
+        e.preventDefault();
+        const dpr = window.devicePixelRatio || 1;
+        const newZoom = Math.max(0.1 / dpr, state.inspector.zoom * 0.8);
+        const rect = modalViewport.getBoundingClientRect();
+        state.inspector.panX = (rect.width / 2) - ((rect.width / 2) - state.inspector.panX) * (newZoom / state.inspector.zoom);
+        state.inspector.panY = (rect.height / 2) - ((rect.height / 2) - state.inspector.panY) * (newZoom / state.inspector.zoom);
+        state.inspector.zoom = newZoom;
+        updatePresetButtonsUI(newZoom);
+        applyInspectorTransform();
       }
     });
 
