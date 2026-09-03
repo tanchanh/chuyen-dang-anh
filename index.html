@@ -78,7 +78,7 @@
       margin-bottom: 0.5rem;
     }
 
-    /* VÙNG KÉO THẢ TẬP TIN - ĐƠN KHUNG TRỰC TIẾP */
+    /* VÙNG KÉO THẢ TẬP TIN */
     .drop-zone {
       display: flex;
       flex-direction: column;
@@ -129,7 +129,7 @@
       display: none;
     }
 
-    /* KHUNG THIẾT LẬP ĐƠN - KHÔNG LỒNG NHIỀU LỚP */
+    /* KHUNG THIẾT LẬP */
     .settings-panel {
       background-color: var(--color-card-bg);
       border: 2px solid var(--color-border);
@@ -154,7 +154,6 @@
       }
     }
 
-    /* CÁC MỤC CÀI ĐẶT KHÔNG DÙNG KHUNG LỒNG */
     .setting-item {
       display: flex;
       flex-direction: column;
@@ -248,7 +247,7 @@
     }
 
     .input-max-width {
-      width: 6rem;
+      width: 5.5rem;
     }
 
     .unit-text {
@@ -256,10 +255,15 @@
       font-size: 1.15rem;
     }
 
+    .dim-multiply {
+      font-weight: bold;
+      padding: 0 0.3rem;
+    }
+
     .dimension-control-row {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
       flex-wrap: wrap;
     }
 
@@ -291,7 +295,7 @@
       background-color: var(--color-primary);
     }
 
-    /* NÚT BẤM CỠ CHỮ TĂNG 0.2REM */
+    /* NÚT BẤM */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -439,7 +443,7 @@
       justify-content: space-between;
     }
 
-    /* DANH SÁCH TẬP TIN - KHÔNG BỊ KHUNG LỒNG BAO BỌC */
+    /* DANH SÁCH TẬP TIN */
     .files-list {
       display: flex;
       flex-direction: column;
@@ -475,7 +479,7 @@
       margin-top: 0.25rem;
     }
 
-    /* THẺ TẬP TIN - GỌN GÀNG, ĐỦ DIỆN TÍCH BỀ NGANG */
+    /* THẺ TẬP TIN */
     .file-card {
       background-color: var(--color-card-bg);
       border: 2px solid var(--color-border);
@@ -705,7 +709,7 @@
   <h1>Chuyển Ảnh Sang Dạng PNG/WebP/JPG</h1>
   <div class="author-signature">Dương Tấn Chánh</div>
 
-  <!-- VÙNG NẠP TẬP TIN (KHÔNG LỒNG KHUNG) -->
+  <!-- VÙNG NẠP TẬP TIN -->
   <div class="drop-zone" id="dropZone">
     <svg class="drop-zone-icon" viewBox="0 0 24 24">
       <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
@@ -721,7 +725,7 @@
     <input type="file" id="fileInput" class="file-input-hidden" multiple accept="image/png,image/jpeg,image/webp,image/bmp,image/svg+xml,image/gif,image/x-icon,image/avif">
   </div>
 
-  <!-- KHUNG CÀI ĐẶT ĐƠN (KHÔNG LỒNG CÁC KHUNG CON) -->
+  <!-- KHUNG CÀI ĐẶT ĐƠN -->
   <div class="settings-panel">
     <h2>Tuỳ Chọn Chuyển Đổi</h2>
     <div class="settings-grid">
@@ -758,7 +762,7 @@
         </div>
       </div>
 
-      <!-- 3. KÍCH THƯỚC XUẤT -->
+      <!-- 3. KÍCH THƯỚC XUẤT: KHỐNG CHẾ CẢ RỘNG VÀ CAO TỐI ĐA -->
       <div class="setting-item setting-item-full">
         <div class="setting-title">3. Kích thước ảnh xuất</div>
         <div class="radio-pill-group">
@@ -768,7 +772,7 @@
           </label>
           <label class="radio-pill-label">
             <input type="radio" name="resizeMode" value="max_dimension" autocomplete="off">
-            Rộng tối đa (px)
+            Giới hạn khung (Rộng × Cao tối đa)
           </label>
         </div>
 
@@ -784,7 +788,11 @@
         <div id="maxDimensionPanel" class="dimension-panel-hidden">
           <div class="dimension-control-row">
             <span>Rộng tối đa:</span>
-            <input type="number" class="number-input input-max-width" id="maxDimWidth" min="100" max="10000" value="1920" autocomplete="off">
+            <input type="number" class="number-input input-max-width" id="maxDimWidth" min="10" max="10000" value="1920" autocomplete="off">
+            <span class="unit-text">px</span>
+            <span class="dim-multiply">×</span>
+            <span>Cao tối đa:</span>
+            <input type="number" class="number-input input-max-width" id="maxDimHeight" min="10" max="10000" value="1080" autocomplete="off">
             <span class="unit-text">px</span>
           </div>
         </div>
@@ -828,7 +836,7 @@
     </div>
   </div>
 
-  <!-- DANH SÁCH CÁC TẬP TIN - TRÀN ĐỀU KHÔNG BỊ KHUNG LỒNG -->
+  <!-- DANH SÁCH CÁC TẬP TIN -->
   <h3>Danh Sách Tập Tin Ảnh</h3>
   <div id="emptyListState" class="empty-state">
     <svg class="empty-icon" width="44" height="44" viewBox="0 0 24 24" fill="currentColor">
@@ -928,6 +936,7 @@
     const scalePercentPanel = document.getElementById('scalePercentPanel');
     const maxDimensionPanel = document.getElementById('maxDimensionPanel');
     const maxDimWidth = document.getElementById('maxDimWidth');
+    const maxDimHeight = document.getElementById('maxDimHeight');
 
     const progressWrapper = document.getElementById('progressWrapper');
     const progressBarFill = document.getElementById('progressBarFill');
@@ -1268,8 +1277,12 @@
       const quality = parseInt(qualityNumber.value, 10) / 100;
       const resizeMode = document.querySelector('input[name="resizeMode"]:checked').value;
       const scaleFactor = state.selectedScale;
+
       let maxConstraintWidth = parseInt(maxDimWidth.value, 10);
       if (isNaN(maxConstraintWidth) || maxConstraintWidth < 10) maxConstraintWidth = 1920;
+
+      let maxConstraintHeight = parseInt(maxDimHeight.value, 10);
+      if (isNaN(maxConstraintHeight) || maxConstraintHeight < 10) maxConstraintHeight = 1080;
 
       const itemsToProcess = [...state.items];
       const totalCount = itemsToProcess.length;
@@ -1292,7 +1305,8 @@
               quality,
               resizeMode,
               scaleFactor,
-              maxConstraintWidth
+              maxConstraintWidth,
+              maxConstraintHeight
             });
             item.status = 'completed';
           } catch (err) {
@@ -1337,6 +1351,7 @@
       showToast(`Chuyển đổi thành công ${completedCount} ảnh!`);
     });
 
+    // Thuật toán khống chế cả Rộng và Cao tối đa cùng lúc (Bounding Box Scaling)
     async function convertSingleImage(item, options) {
       let outWidth = item.originalWidth;
       let outHeight = item.originalHeight;
@@ -1346,11 +1361,16 @@
         outWidth = Math.max(1, Math.round(item.originalWidth * factor));
         outHeight = Math.max(1, Math.round(item.originalHeight * factor));
       } else {
-        if (item.originalWidth > options.maxConstraintWidth) {
-          const ratio = options.maxConstraintWidth / item.originalWidth;
-          outWidth = options.maxConstraintWidth;
-          outHeight = Math.max(1, Math.round(item.originalHeight * ratio));
-        }
+        // Áp dụng đồng thời cả 2 điều kiện chiều ngang và chiều dọc
+        const scaleW = options.maxConstraintWidth / item.originalWidth;
+        const scaleH = options.maxConstraintHeight / item.originalHeight;
+
+        // Chọn tỉ lệ co mạnh hơn để đảm bảo KHÔNG CẠNH NÀO vượt giới hạn
+        // Đồng thời tuyệt đối không phóng to ảnh (scale <= 1.0)
+        const finalScale = Math.min(1.0, scaleW, scaleH);
+
+        outWidth = Math.max(1, Math.round(item.originalWidth * finalScale));
+        outHeight = Math.max(1, Math.round(item.originalHeight * finalScale));
       }
 
       const MAX_SAFE_PIXELS = 36000000;
