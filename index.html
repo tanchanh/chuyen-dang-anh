@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Chuyển Ảnh Sang Dạng PNG/WebP/JPG - Dương Tấn Chánh</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --color-primary: #0066B6;
+      --color-primary-hover: #4020D0;
+      --color-success: #009911;
+      --color-accent: #7FDD0F;
+      --color-warning: #EE6000;
+      --color-danger: #FF2040;
+      --color-black: #000000;
+      --color-dark-surface: #1A1A1A;
+      --color-card-bg: #262626;
+      --color-border: #CCCCCC;
+      --color-white: #FFFFFF;
+      --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      background-color: var(--color-dark-surface);
+      color: var(--color-white);
+      font-family: var(--font-family);
+      font-size: 1rem;
+      font-weight: normal;
+      overflow-x: hidden;
+      word-break: normal;
+      overflow-wrap: break-word;
+    }
+
+    body {
+      padding: 0.5rem;
+      padding-bottom: 5rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      color: var(--color-white);
+      margin-top: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .author-signature {
+      font-size: 1.2rem;
+      font-style: normal;
+      font-weight: normal;
+      text-align: right;
+      color: var(--color-accent);
+      margin-bottom: 1rem;
+      padding-right: 0.5rem;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: var(--color-white);
+      margin-bottom: 0.75rem;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--color-white);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-card {
+      background-color: var(--color-card-bg);
+      border: 2px solid var(--color-border);
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      width: 100%;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    /* VÙNG KÉO THẢ TẬP TIN */
+    .drop-zone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed var(--color-border);
+      border-radius: 0.5rem;
+      padding: 1.25rem 0.5rem;
+      text-align: center;
+      background-color: var(--color-dark-surface);
+      cursor: pointer;
+      user-select: none;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .drop-zone.drag-over {
+      border-color: var(--color-accent);
+      background-color: var(--color-card-bg);
+    }
+
+    .drop-zone * {
+      pointer-events: none;
+    }
+
+    .drop-zone-icon {
+      width: 2.75rem;
+      height: 2.75rem;
+      fill: var(--color-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .drop-zone-title {
+      font-size: 1.05rem;
+      font-weight: bold;
+      color: var(--color-white);
+      margin-bottom: 0.25rem;
+    }
+
+    .drop-zone-hint {
+      font-size: 0.85rem;
+      color: var(--color-border);
+      margin-bottom: 0.75rem;
+    }
+
+    .file-input-hidden {
+      display: none;
+    }
+
+    /* NÚT BẤM TIÊU CHUẨN */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      font-family: var(--font-family);
+      font-size: 0.95rem;
+      font-weight: bold;
+      border-radius: 0.4rem;
+      border: 2px solid transparent;
+      padding: 0.55rem 0.85rem;
+      cursor: pointer;
+      user-select: none;
+      color: var(--color-white);
+      pointer-events: auto;
+      white-space: nowrap;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: var(--color-primary-hover);
+      border-color: var(--color-primary-hover);
+    }
+
+    .btn-success {
+      background-color: var(--color-success);
+      border-color: var(--color-success);
+    }
+
+    .btn-success:hover:not(:disabled) {
+      background-color: var(--color-accent);
+      color: var(--color-black);
+      border-color: var(--color-accent);
+    }
+
+    .btn-danger {
+      background-color: var(--color-danger);
+      border-color: var(--color-danger);
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background-color: var(--color-warning);
+      border-color: var(--color-warning);
+    }
+
+    .btn-secondary {
+      background-color: var(--color-dark-surface);
+      border: 2px solid var(--color-border);
+      color: var(--color-white);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      border-color: var(--color-white);
+    }
+
+    .btn-small {
+      font-size: 0.8rem;
+      padding: 0.35rem 0.6rem;
+    }
+
+    /* NÚT CÔNG TẮC: ẢNH GỐC / ẢNH NÉN */
+    .btn-toggle-compare {
+      background-color: var(--color-dark-surface);
+      border: 2px solid var(--color-accent);
+      color: var(--color-white);
+      font-weight: bold;
+      padding: 0.3rem 0.5rem;
+      border-radius: 0.3rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.8rem;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .compare-label-active {
+      color: var(--color-accent);
+    }
+
+    .compare-label-inactive {
+      color: var(--color-border);
+      opacity: 0.45;
+    }
+
+    .compare-slash {
+      color: var(--color-border);
+      font-weight: normal;
+    }
+
+    /* LƯỚI ĐIỀU KHIỂN TINH GỌN */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      width: 100%;
+      min-width: 0;
+    }
+
+    @media (min-width: 52rem) {
+      .settings-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .setting-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      background-color: var(--color-dark-surface);
+      border: 2px solid var(--color-card-bg);
+      border-radius: 0.4rem;
+      padding: 0.75rem;
+      min-width: 0;
+    }
+
+    .group-disabled {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .setting-label {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: var(--color-accent);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+    }
+
+    .quality-display-badge {
+      color: var(--color-accent);
+      font-weight: bold;
+    }
+
+    .radio-pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .radio-pill-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background-color: var(--color-card-bg);
+      border: 2px solid var(--color-border);
+      border-radius: 0.3rem;
+      padding: 0.4rem 0.6rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .radio-pill-label:has(input:checked) {
+      border-color: var(--color-accent);
+      background-color: var(--color-primary);
+    }
+
+    .radio-pill-label input {
+      accent-color: var(--color-accent);
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .range-slider {
+      flex: 1;
+      height: 0.6rem;
+      accent-color: var(--color-accent);
+      cursor: pointer;
+    }
+
+    .number-input {
+      width: 4rem;
+      background-color: var(--color-card-bg);
+      border: 2px solid var(--color-border);
+      border-radius: 0.3rem;
+      color: var(--color-white);
+      font-family: var(--font-family);
+      font-size: 0.95rem;
+      padding: 0.3rem;
+      text-align: center;
+    }
+
+    .number-input:focus {
+      outline: none;
+      border-color: var(--color-accent);
+    }
+
+    .input-max-width {
+      width: 5.5rem;
+    }
+
+    .unit-text {
+      font-weight: bold;
+    }
+
+    .dimension-control-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .dimension-panel-hidden {
+      display: none;
+    }
+
+    .preset-scale-buttons {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      margin-top: 0.25rem;
+    }
+
+    .preset-btn {
+      background-color: var(--color-card-bg);
+      border: 2px solid var(--color-border);
+      color: var(--color-white);
+      border-radius: 0.3rem;
+      padding: 0.35rem 0.55rem;
+      font-size: 0.8rem;
+      font-weight: bold;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .preset-btn.active {
+      border-color: var(--color-accent);
+      background-color: var(--color-primary);
+    }
+
+    .action-toolbar {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 36rem) {
+      .action-toolbar .btn {
+        flex: 1 1 100%;
+      }
+    }
+
+    /* TIẾN TRÌNH */
+    .progress-wrapper {
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .progress-wrapper.progress-active {
+      display: block;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 0.9rem;
+      background-color: var(--color-card-bg);
+      border: 2px solid var(--color-border);
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background-color: var(--color-accent);
+    }
+
+    .progress-text {
+      font-size: 0.85rem;
+      color: var(--color-border);
+      margin-top: 0.3rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* DANH SÁCH TẬP TIN */
+    .files-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 0.5rem;
+      border: 2px dashed var(--color-border);
+      border-radius: 0.5rem;
+      text-align: center;
+      color: var(--color-border);
+    }
+
+    .empty-state.state-hidden {
+      display: none;
+    }
+
+    .empty-icon {
+      opacity: 0.5;
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-subtext {
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+    }
+
+    /* THẺ TẬP TIN */
+    .file-card {
+      background-color: var(--color-dark-surface);
+      border: 2px solid var(--color-border);
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 0.75rem;
+      width: 100%;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .file-thumbnail {
+      width: 4.25rem;
+      height: 4.25rem;
+      flex-shrink: 0;
+      object-fit: cover;
+      border-radius: 0.3rem;
+      border: 2px solid var(--color-border);
+      background-color: var(--color-black);
+      cursor: default;
+    }
+
+    .file-thumbnail.thumbnail-inspectable {
+      cursor: pointer;
+      border-color: var(--color-primary);
+    }
+
+    .file-thumbnail.thumbnail-inspectable:hover {
+      border-color: var(--color-accent);
+    }
+
+    .file-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      flex: 1;
+      min-width: 0;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .file-name {
+      font-weight: bold;
+      font-size: 0.95rem;
+      color: var(--color-white);
+      word-break: normal;
+      overflow-wrap: anywhere;
+      min-width: 0;
+      line-height: 1.3;
+    }
+
+    .file-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.6rem;
+      font-size: 0.8rem;
+      color: var(--color-border);
+      align-items: center;
+      min-width: 0;
+    }
+
+    .file-output-highlight {
+      color: var(--color-accent);
+      font-weight: bold;
+      font-size: 0.85rem;
+      word-break: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      font-size: 0.75rem;
+      font-weight: bold;
+      padding: 0.15rem 0.35rem;
+      border-radius: 0.25rem;
+      border: 2px solid currentColor;
+      white-space: nowrap;
+    }
+
+    .badge-pending { color: var(--color-warning); }
+    .badge-processing { color: var(--color-primary); }
+    .badge-error { color: var(--color-danger); }
+
+    .file-card-actions {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      margin-top: 0.35rem;
+      min-width: 0;
+    }
+
+    /* MODAL SOI CHI TIẾT */
+    .fullscreen-modal {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      background-color: var(--color-black);
+      z-index: 9999;
+      display: none;
+      flex-direction: column;
+    }
+
+    .fullscreen-modal.active {
+      display: flex;
+    }
+
+    .modal-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      background-color: var(--color-dark-surface);
+      border-bottom: 2px solid var(--color-border);
+      padding: 0.4rem 0.5rem;
+      min-width: 0;
+    }
+
+    .modal-header-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      min-width: 0;
+    }
+
+    .modal-header-title {
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: var(--color-accent);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .inspector-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+
+    .modal-viewport {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      background-color: var(--color-black);
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+    }
+
+    .modal-viewport.grabbing {
+      cursor: grabbing;
+    }
+
+    .modal-image-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: 0 0;
+    }
+
+    .modal-image {
+      max-width: none;
+      display: block;
+      pointer-events: none;
+      image-rendering: -webkit-optimize-contrast;
+    }
+
+    .modal-image.pixel-mode {
+      image-rendering: pixelated;
+    }
+
+    .zoom-display-badge {
+      color: var(--color-accent);
+      font-weight: bold;
+      font-size: 0.85rem;
+      padding: 0 0.3rem;
+    }
+
+    /* TOAST THÔNG BÁO */
+    .toast-container {
+      position: fixed;
+      bottom: 1rem;
+      right: 0.5rem;
+      left: 0.5rem;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+      align-items: center;
+    }
+
+    .toast-message {
+      background-color: var(--color-dark-surface);
+      border: 2px solid var(--color-accent);
+      color: var(--color-white);
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.4rem;
+      font-size: 0.85rem;
+      box-shadow: 0 0 1rem var(--color-black);
+      pointer-events: auto;
+      max-width: 24rem;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      transition: opacity 0.3s ease;
+    }
+
+    .toast-message.toast-error {
+      border-color: var(--color-danger);
+    }
+
+    .toast-fading {
+      opacity: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Chuyển Ảnh Sang Dạng PNG/WebP/JPG</h1>
+  <div class="author-signature">Dương Tấn Chánh</div>
+
+  <!-- VÙNG NẠP TẬP TIN -->
+  <div class="section-card">
+    <div class="drop-zone" id="dropZone">
+      <svg class="drop-zone-icon" viewBox="0 0 24 24">
+        <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+      </svg>
+      <div class="drop-zone-title">Kéo & thả ảnh vào đây, hoặc Dán (Ctrl + V)</div>
+      <div class="drop-zone-hint">Hỗ trợ chọn cùng lúc một hoặc nhiều tập tin ảnh</div>
+      <button type="button" class="btn btn-primary" id="btnSelectFiles">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+        </svg>
+        Chọn tập tin từ máy
+      </button>
+      <input type="file" id="fileInput" class="file-input-hidden" multiple accept="image/png,image/jpeg,image/webp,image/bmp,image/svg+xml,image/gif,image/x-icon,image/avif">
+    </div>
+  </div>
+
+  <!-- BẢNG THIẾT LẬP THÔNG SỐ TINH GỌN -->
+  <div class="section-card">
+    <h2>Tuỳ Chọn Chuyển Đổi</h2>
+    <div class="settings-grid">
+      
+      <!-- 1. ĐỊNH DẠNG ĐÍCH -->
+      <div class="setting-group">
+        <div class="setting-label">1. Định dạng muốn chuyển sang</div>
+        <div class="radio-pill-group">
+          <label class="radio-pill-label">
+            <input type="radio" name="targetFormat" value="image/webp" checked>
+            WEBP (Khuyên dùng)
+          </label>
+          <label class="radio-pill-label">
+            <input type="radio" name="targetFormat" value="image/jpeg">
+            JPG
+          </label>
+          <label class="radio-pill-label">
+            <input type="radio" name="targetFormat" value="image/png">
+            PNG
+          </label>
+        </div>
+      </div>
+
+      <!-- 2. CHẤT LƯỢNG ẢNH (MẶC ĐỊNH 93%) -->
+      <div class="setting-group" id="qualitySettingGroup">
+        <div class="setting-label">
+          <span>2. Chất lượng nén</span>
+          <span id="qualityTextDisplay" class="quality-display-badge">93%</span>
+        </div>
+        <div class="slider-row">
+          <input type="range" class="range-slider" id="qualityRange" min="1" max="100" value="93">
+          <input type="number" class="number-input" id="qualityNumber" min="1" max="100" value="93">
+          <span class="unit-text">%</span>
+        </div>
+      </div>
+
+      <!-- 3. KÍCH THƯỚC XUẤT -->
+      <div class="setting-group" style="grid-column: 1 / -1;">
+        <div class="setting-label">3. Kích thước ảnh xuất</div>
+        <div class="radio-pill-group">
+          <label class="radio-pill-label">
+            <input type="radio" name="resizeMode" value="percent" checked>
+            Thu nhỏ theo tỉ lệ (%)
+          </label>
+          <label class="radio-pill-label">
+            <input type="radio" name="resizeMode" value="max_dimension">
+            Giới hạn chiều rộng tối đa (px)
+          </label>
+        </div>
+
+        <div id="scalePercentPanel">
+          <div class="preset-scale-buttons">
+            <button type="button" class="preset-btn active" data-scale="1.00">100% (Giữ nguyên gốc)</button>
+            <button type="button" class="preset-btn" data-scale="0.75">75%</button>
+            <button type="button" class="preset-btn" data-scale="0.50">50%</button>
+            <button type="button" class="preset-btn" data-scale="0.25">25%</button>
+          </div>
+        </div>
+
+        <div id="maxDimensionPanel" class="dimension-panel-hidden">
+          <div class="dimension-control-row">
+            <span>Rộng tối đa:</span>
+            <input type="number" class="number-input input-max-width" id="maxDimWidth" min="100" max="10000" value="1920">
+            <span>px</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- THANH ĐIỀU KHIỂN HÀNH ĐỘNG -->
+  <div class="action-toolbar">
+    <button type="button" class="btn btn-success" id="btnConvertAll" disabled>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+      </svg>
+      Chuyển đổi toàn bộ (<span id="batchCountBadge">0</span>)
+    </button>
+
+    <button type="button" class="btn btn-primary" id="btnDownloadAll" disabled>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
+      </svg>
+      Tải xuống tất cả
+    </button>
+
+    <button type="button" class="btn btn-danger" id="btnClearList" disabled>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+      </svg>
+      Xoá danh sách
+    </button>
+  </div>
+
+  <!-- TIẾN TRÌNH XỬ LÝ -->
+  <div class="progress-wrapper" id="progressWrapper">
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill" id="progressBarFill"></div>
+    </div>
+    <div class="progress-text">
+      <span id="progressStatusText">Đang chuẩn bị...</span>
+      <span id="progressPercentText">0%</span>
+    </div>
+  </div>
+
+  <!-- DANH SÁCH CÁC TẬP TIN -->
+  <div class="section-card">
+    <h3>Danh Sách Tập Tin Ảnh</h3>
+    <div id="emptyListState" class="empty-state">
+      <svg class="empty-icon" width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+      </svg>
+      <div>Chưa có tập tin nào trong danh sách</div>
+      <div class="empty-subtext">Hãy kéo thả hoặc bấm nút chọn ảnh ở trên</div>
+    </div>
+    <div class="files-list" id="filesListContainer"></div>
+  </div>
+
+  <!-- MODAL SOI CHI TIẾT TOÀN MÀN HÌNH -->
+  <div class="fullscreen-modal" id="fullscreenInspectorModal">
+    <div class="modal-header">
+      <div class="modal-header-top-row">
+        <div class="modal-header-title" id="modalFileName">Soi chi tiết</div>
+        <span id="currentZoomText" class="zoom-display-badge">100%</span>
+        <button type="button" class="btn btn-danger btn-small" id="btnCloseModal">Đóng (ESC)</button>
+      </div>
+
+      <div class="inspector-controls">
+        <!-- NÚT DUY NHẤT: ẢNH GỐC / ẢNH NÉN -->
+        <button type="button" class="btn-toggle-compare" id="btnToggleCompare" title="Bấm để chuyển đổi qua lại giữa Ảnh Gốc và Ảnh Nén">
+          <span id="labelCompressed" class="compare-label-active">Ảnh Nén</span>
+          <span class="compare-slash">/</span>
+          <span id="labelOriginal" class="compare-label-inactive">Ảnh Gốc</span>
+        </button>
+
+        <!-- CÁC MỨC ZOOM -->
+        <button type="button" class="preset-btn active" data-phys-zoom="1">100%</button>
+        <button type="button" class="preset-btn" data-phys-zoom="2">200%</button>
+        <button type="button" class="preset-btn" data-phys-zoom="4">400%</button>
+        <button type="button" class="preset-btn" data-phys-zoom="8">800%</button>
+        <button type="button" class="preset-btn" data-phys-zoom="16">1600%</button>
+
+        <button type="button" class="btn btn-secondary btn-small" id="btnResetPanZoom">Về giữa</button>
+      </div>
+    </div>
+
+    <!-- VÙNG SOI ẢNH TOÀN MÀN HÌNH -->
+    <div class="modal-viewport" id="modalViewport">
+      <div class="modal-image-wrapper" id="modalImageWrapper">
+        <img src="" id="modalInspectorImage" class="modal-image" alt="Soi chi tiết">
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    /* ==========================================================================
+       KIẾN TRÚC JAVASCRIPT THUẦN (VANILLA JS) - DƯƠNG TẤN CHÁNH
+       ========================================================================== */
+
+    const state = {
+      items: [],
+      isProcessing: false,
+      selectedScale: 1.0,
+      concurrencyLimit: Math.max(1, Math.min(navigator.hardwareConcurrency || 4, 8)),
+      inspector: {
+        activeItem: null,
+        viewMode: 'converted',
+        zoom: 1.0,
+        panX: 0,
+        panY: 0,
+        isPanning: false,
+        startX: 0,
+        startY: 0
+      }
+    };
+
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const btnSelectFiles = document.getElementById('btnSelectFiles');
+    const filesListContainer = document.getElementById('filesListContainer');
+    const emptyListState = document.getElementById('emptyListState');
+    const btnConvertAll = document.getElementById('btnConvertAll');
+    const btnDownloadAll = document.getElementById('btnDownloadAll');
+    const btnClearList = document.getElementById('btnClearList');
+    const batchCountBadge = document.getElementById('batchCountBadge');
+
+    const qualityRange = document.getElementById('qualityRange');
+    const qualityNumber = document.getElementById('qualityNumber');
+    const qualityTextDisplay = document.getElementById('qualityTextDisplay');
+    const qualitySettingGroup = document.getElementById('qualitySettingGroup');
+
+    const scalePercentPanel = document.getElementById('scalePercentPanel');
+    const maxDimensionPanel = document.getElementById('maxDimensionPanel');
+    const maxDimWidth = document.getElementById('maxDimWidth');
+
+    const progressWrapper = document.getElementById('progressWrapper');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressStatusText = document.getElementById('progressStatusText');
+    const progressPercentText = document.getElementById('progressPercentText');
+
+    const fullscreenInspectorModal = document.getElementById('fullscreenInspectorModal');
+    const btnCloseModal = document.getElementById('btnCloseModal');
+    const modalFileName = document.getElementById('modalFileName');
+    const modalViewport = document.getElementById('modalViewport');
+    const modalImageWrapper = document.getElementById('modalImageWrapper');
+    const modalInspectorImage = document.getElementById('modalInspectorImage');
+    const currentZoomText = document.getElementById('currentZoomText');
+    const btnResetPanZoom = document.getElementById('btnResetPanZoom');
+    const btnToggleCompare = document.getElementById('btnToggleCompare');
+    const labelCompressed = document.getElementById('labelCompressed');
+    const labelOriginal = document.getElementById('labelOriginal');
+
+    function showToast(message, isError = false) {
+      const toastContainer = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast-message ${isError ? 'toast-error' : ''}`;
+      toast.textContent = message;
+
+      toastContainer.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add('toast-fading');
+        setTimeout(() => {
+          if (toast.parentElement) toast.remove();
+        }, 300);
+      }, 3000);
+    }
+
+    function formatBytes(bytes, decimals = 2) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const dm = decimals < 0 ? 0 : decimals;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    function syncQuality(val) {
+      let q = parseInt(val, 10);
+      if (isNaN(q)) q = 93;
+      if (q < 1) q = 1;
+      if (q > 100) q = 100;
+      qualityRange.value = q;
+      qualityNumber.value = q;
+      qualityTextDisplay.textContent = q + '%';
+    }
+
+    qualityRange.addEventListener('input', (e) => syncQuality(e.target.value));
+
+    qualityNumber.addEventListener('input', (e) => {
+      const val = e.target.value;
+      if (val === '') return;
+      syncQuality(val);
+    });
+
+    qualityNumber.addEventListener('blur', (e) => {
+      if (e.target.value === '' || isNaN(parseInt(e.target.value, 10))) {
+        syncQuality(93);
+      }
+    });
+
+    document.querySelectorAll('input[name="targetFormat"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        if (e.target.value === 'image/png') {
+          qualitySettingGroup.classList.add('group-disabled');
+        } else {
+          qualitySettingGroup.classList.remove('group-disabled');
+        }
+      });
+    });
+
+    document.querySelectorAll('input[name="resizeMode"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        if (e.target.value === 'percent') {
+          scalePercentPanel.classList.remove('dimension-panel-hidden');
+          maxDimensionPanel.classList.add('dimension-panel-hidden');
+        } else {
+          scalePercentPanel.classList.add('dimension-panel-hidden');
+          maxDimensionPanel.classList.remove('dimension-panel-hidden');
+        }
+      });
+    });
+
+    document.querySelectorAll('.preset-scale-buttons .preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.preset-scale-buttons .preset-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.selectedScale = parseFloat(btn.getAttribute('data-scale'));
+      });
+    });
+
+    btnSelectFiles.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      handleFilesSelected(e.target.files);
+      fileInput.value = '';
+    });
+
+    let dragCounter = 0;
+    window.addEventListener('dragenter', (e) => {
+      e.preventDefault();
+      dragCounter++;
+      dropZone.classList.add('drag-over');
+    });
+
+    window.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      dragCounter--;
+      if (dragCounter <= 0) {
+        dragCounter = 0;
+        dropZone.classList.remove('drag-over');
+      }
+    });
+
+    window.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+
+    window.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dragCounter = 0;
+      dropZone.classList.remove('drag-over');
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        handleFilesSelected(e.dataTransfer.files);
+      }
+    });
+
+    window.addEventListener('paste', (e) => {
+      if (e.clipboardData && e.clipboardData.items) {
+        const pastedFiles = [];
+        for (let i = 0; i < e.clipboardData.items.length; i++) {
+          const item = e.clipboardData.items[i];
+          if (item.type.indexOf('image') !== -1) {
+            const blob = item.getAsFile();
+            if (blob) {
+              const cleanFileName = blob.name && blob.name !== 'image.png' 
+                ? blob.name 
+                : `anh-clipboard-${Date.now()}-${i + 1}.png`;
+              
+              const renamedFile = new File([blob], cleanFileName, { type: blob.type });
+              pastedFiles.push(renamedFile);
+            }
+          }
+        }
+        if (pastedFiles.length > 0) {
+          handleFilesSelected(pastedFiles);
+          showToast(`Đã nhận ${pastedFiles.length} ảnh từ Clipboard!`);
+        }
+      }
+    });
+
+    async function handleFilesSelected(fileList) {
+      const validTypes = [
+        'image/png', 'image/jpeg', 'image/jpg', 'image/webp',
+        'image/bmp', 'image/svg+xml', 'image/gif', 'image/x-icon',
+        'image/vnd.microsoft.icon', 'image/avif'
+      ];
+
+      let addedCount = 0;
+      for (let i = 0; i < fileList.length; i++) {
+        const file = fileList[i];
+        const isImage = validTypes.includes(file.type) || file.name.match(/\.(png|jpe?g|webp|bmp|svg|gif|ico|avif)$/i);
+        if (!isImage) {
+          showToast(`Bỏ qua: ${file.name} (Không đúng định dạng)`, true);
+          continue;
+        }
+
+        const id = 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        const originalUrl = URL.createObjectURL(file);
+        const dimensions = await readImageDimensions(file, originalUrl);
+
+        const item = {
+          id,
+          file,
+          originalName: file.name || `anh_${Date.now()}.png`,
+          originalSize: file.size,
+          originalType: file.type || 'image/unknown',
+          originalWidth: dimensions.width,
+          originalHeight: dimensions.height,
+          originalUrl,
+          convertedBlob: null,
+          convertedUrl: null,
+          convertedSize: 0,
+          convertedWidth: 0,
+          convertedHeight: 0,
+          convertedFormat: '',
+          status: 'pending',
+          errorMessage: ''
+        };
+
+        state.items.push(item);
+        addedCount++;
+      }
+
+      if (addedCount > 0) {
+        updateUI();
+        showToast(`Đã thêm ${addedCount} tập tin.`);
+      }
+    }
+
+    function readImageDimensions(file, objectUrl) {
+      return new Promise((resolve) => {
+        if ('createImageBitmap' in window) {
+          createImageBitmap(file, { imageOrientation: 'from-image' })
+            .then(bitmap => {
+              const res = { width: bitmap.width, height: bitmap.height };
+              bitmap.close();
+              resolve(res);
+            })
+            .catch(() => fallbackImageDimension(objectUrl, resolve));
+        } else {
+          fallbackImageDimension(objectUrl, resolve);
+        }
+      });
+    }
+
+    function fallbackImageDimension(url, resolve) {
+      const img = new Image();
+      img.onload = () => resolve({ width: img.naturalWidth || 1000, height: img.naturalHeight || 1000 });
+      img.onerror = () => resolve({ width: 1000, height: 1000 });
+      img.src = url;
+    }
+
+    function updateUI() {
+      batchCountBadge.textContent = state.items.length;
+      if (state.items.length === 0) {
+        emptyListState.classList.remove('state-hidden');
+        btnConvertAll.disabled = true;
+        btnDownloadAll.disabled = true;
+        btnClearList.disabled = true;
+      } else {
+        emptyListState.classList.add('state-hidden');
+        btnConvertAll.disabled = state.isProcessing;
+        btnClearList.disabled = state.isProcessing;
+        btnDownloadAll.disabled = !state.items.some(i => i.status === 'completed');
+      }
+
+      renderFileList();
+    }
+
+    function renderFileList() {
+      filesListContainer.innerHTML = '';
+      state.items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'file-card';
+        card.id = `card_${item.id}`;
+
+        let statusBadgeHtml = '';
+        if (item.status === 'pending') {
+          statusBadgeHtml = `<span class="status-badge badge-pending">Chờ xử lý</span>`;
+        } else if (item.status === 'processing') {
+          statusBadgeHtml = `<span class="status-badge badge-processing">Đang nén...</span>`;
+        } else if (item.status === 'error') {
+          statusBadgeHtml = `<span class="status-badge badge-error">Lỗi</span>`;
+        }
+
+        let outputDetailsHtml = '';
+        if (item.status === 'completed') {
+          outputDetailsHtml = `
+            <div class="file-output-highlight">
+              Xuất: ${item.convertedWidth} x ${item.convertedHeight} px | 
+              ${formatBytes(item.convertedSize)} | ${item.convertedFormat.replace('image/', '').toUpperCase()}
+            </div>
+          `;
+        }
+
+        const isCompleted = (item.status === 'completed');
+        const thumbClass = isCompleted ? 'file-thumbnail thumbnail-inspectable' : 'file-thumbnail';
+        const thumbTitle = isCompleted ? 'Bấm vào ảnh để soi chi tiết' : 'Chờ nén xong để soi chi tiết';
+        const thumbClick = isCompleted ? `onclick="openInspector('${item.id}')"` : '';
+
+        card.innerHTML = `
+          <img src="${item.originalUrl}" class="${thumbClass}" alt="Thumbnail" title="${thumbTitle}" ${thumbClick}>
+          <div class="file-details">
+            <div class="file-name">${escapeHtml(item.originalName)}</div>
+            <div class="file-meta-row">
+              <span>Gốc: ${item.originalWidth} x ${item.originalHeight} px</span>
+              <span>${formatBytes(item.originalSize)}</span>
+              ${statusBadgeHtml}
+            </div>
+            ${outputDetailsHtml}
+            <div class="file-card-actions">
+              ${isCompleted ? `
+                <button type="button" class="btn btn-success btn-small" onclick="downloadSingleFile('${item.id}')">
+                  Tải về
+                </button>
+              ` : ''}
+              <button type="button" class="btn btn-danger btn-small" ${state.isProcessing ? 'disabled' : ''} onclick="removeFile('${item.id}')">
+                Xoá
+              </button>
+            </div>
+          </div>
+        `;
+        filesListContainer.appendChild(card);
+      });
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    window.removeFile = function(id) {
+      if (state.isProcessing) return;
+
+      const idx = state.items.findIndex(i => i.id === id);
+      if (idx !== -1) {
+        const item = state.items[idx];
+        if (item.originalUrl) URL.revokeObjectURL(item.originalUrl);
+        if (item.convertedUrl) URL.revokeObjectURL(item.convertedUrl);
+        state.items.splice(idx, 1);
+        updateUI();
+      }
+    };
+
+    btnClearList.addEventListener('click', () => {
+      if (state.isProcessing) return;
+      state.items.forEach(item => {
+        if (item.originalUrl) URL.revokeObjectURL(item.originalUrl);
+        if (item.convertedUrl) URL.revokeObjectURL(item.convertedUrl);
+      });
+      state.items = [];
+      updateUI();
+      showToast('Đã xoá danh sách.');
+    });
+
+    btnConvertAll.addEventListener('click', async () => {
+      if (state.isProcessing || state.items.length === 0) return;
+
+      state.isProcessing = true;
+      updateUI();
+      progressWrapper.classList.add('progress-active');
+      progressBarFill.style.width = '0%';
+      progressPercentText.textContent = '0%';
+
+      const targetFormat = document.querySelector('input[name="targetFormat"]:checked').value;
+      const quality = parseInt(qualityNumber.value, 10) / 100;
+      const resizeMode = document.querySelector('input[name="resizeMode"]:checked').value;
+      const scaleFactor = state.selectedScale;
+      let maxConstraintWidth = parseInt(maxDimWidth.value, 10);
+      if (isNaN(maxConstraintWidth) || maxConstraintWidth < 10) maxConstraintWidth = 1920;
+
+      const itemsToProcess = [...state.items];
+      const totalCount = itemsToProcess.length;
+      let completedCount = 0;
+
+      progressStatusText.textContent = `Đang chuyển đổi ${totalCount} ảnh...`;
+
+      const queue = [...itemsToProcess];
+      const activeWorkers = [];
+
+      async function worker() {
+        while (queue.length > 0) {
+          const item = queue.shift();
+          item.status = 'processing';
+          renderFileList();
+
+          try {
+            await convertSingleImage(item, {
+              targetFormat,
+              quality,
+              resizeMode,
+              scaleFactor,
+              maxConstraintWidth
+            });
+            item.status = 'completed';
+          } catch (err) {
+            console.error(err);
+            item.status = 'error';
+            item.errorMessage = err.message || 'Lỗi xử lý';
+          }
+
+          completedCount++;
+          const percent = Math.round((completedCount / totalCount) * 100);
+          progressBarFill.style.width = `${percent}%`;
+          progressPercentText.textContent = `${percent}%`;
+          progressStatusText.textContent = `Đã hoàn thành ${completedCount} / ${totalCount} ảnh...`;
+          renderFileList();
+        }
+      }
+
+      for (let i = 0; i < state.concurrencyLimit; i++) {
+        activeWorkers.push(worker());
+      }
+
+      await Promise.all(activeWorkers);
+
+      state.isProcessing = false;
+      progressStatusText.textContent = `Chuyển đổi hoàn tất ${completedCount} ảnh!`;
+      updateUI();
+      showToast(`Chuyển đổi thành công ${completedCount} ảnh!`);
+    });
+
+    async function convertSingleImage(item, options) {
+      let outWidth = item.originalWidth;
+      let outHeight = item.originalHeight;
+
+      if (options.resizeMode === 'percent') {
+        const factor = Math.min(options.scaleFactor, 1.0);
+        outWidth = Math.max(1, Math.round(item.originalWidth * factor));
+        outHeight = Math.max(1, Math.round(item.originalHeight * factor));
+      } else {
+        if (item.originalWidth > options.maxConstraintWidth) {
+          const ratio = options.maxConstraintWidth / item.originalWidth;
+          outWidth = options.maxConstraintWidth;
+          outHeight = Math.max(1, Math.round(item.originalHeight * ratio));
+        }
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = outWidth;
+      canvas.height = outHeight;
+      const ctx = canvas.getContext('2d', {
+        alpha: options.targetFormat !== 'image/jpeg',
+        colorSpace: 'srgb',
+        willReadFrequently: false
+      });
+
+      // Tự động lót nền trắng tinh khiết nếu xuất JPG
+      if (options.targetFormat === 'image/jpeg') {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, outWidth, outHeight);
+      }
+
+      // Luôn áp dụng thuật toán Bicubic mượt nét cao nhất
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+
+      let imageSource;
+      try {
+        if ('createImageBitmap' in window) {
+          imageSource = await createImageBitmap(item.file, { imageOrientation: 'from-image' });
+        } else {
+          imageSource = await loadStandardImage(item.originalUrl);
+        }
+      } catch (e) {
+        imageSource = await loadStandardImage(item.originalUrl);
+      }
+
+      ctx.drawImage(imageSource, 0, 0, outWidth, outHeight);
+      if (imageSource.close) imageSource.close();
+
+      let convertedBlob = await new Promise((resolve, reject) => {
+        canvas.toBlob(blob => {
+          if (blob) resolve(blob);
+          else reject(new Error('Lỗi mã hoá ảnh'));
+        }, options.targetFormat, options.quality);
+      });
+
+      // Tự động khảm và chuẩn hoá EXIF ngầm cho JPG
+      if (options.targetFormat === 'image/jpeg') {
+        try {
+          convertedBlob = await tryInjectExif(item.file, convertedBlob, options.targetFormat);
+        } catch (exifErr) {
+          console.warn('Bỏ qua khảm EXIF:', exifErr);
+        }
+      }
+
+      if (item.convertedUrl) URL.revokeObjectURL(item.convertedUrl);
+
+      item.convertedBlob = convertedBlob;
+      item.convertedUrl = URL.createObjectURL(convertedBlob);
+      item.convertedSize = convertedBlob.size;
+      item.convertedWidth = outWidth;
+      item.convertedHeight = outHeight;
+      item.convertedFormat = options.targetFormat;
+    }
+
+    function loadStandardImage(url) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('Lỗi tải ảnh'));
+        img.src = url;
+      });
+    }
+
+    async function tryInjectExif(originalFile, newBlob, targetMime) {
+      if (targetMime !== 'image/jpeg') return newBlob;
+
+      const origBuffer = await originalFile.arrayBuffer();
+      const origView = new DataView(origBuffer);
+
+      if (origView.getUint16(0, false) !== 0xFFD8) return newBlob;
+
+      let exifSegment = null;
+      let offset = 2;
+
+      while (offset < origView.byteLength - 4) {
+        const marker = origView.getUint16(offset, false);
+        const length = origView.getUint16(offset + 2, false);
+
+        if (marker === 0xFFDA || length < 2) break;
+
+        if (marker === 0xFFE1) {
+          exifSegment = origBuffer.slice(offset, offset + 2 + length);
+          break;
+        }
+
+        if ((marker & 0xFF00) !== 0xFF00) break;
+        offset += 2 + length;
+      }
+
+      if (!exifSegment) return newBlob;
+
+      normalizeOrientationTag(exifSegment);
+
+      const newBuffer = await newBlob.arrayBuffer();
+      const newView = new DataView(newBuffer);
+      if (newView.getUint16(0, false) !== 0xFFD8) return newBlob;
+
+      const combinedBlob = new Blob([
+        new Uint8Array(newBuffer.slice(0, 2)),
+        exifSegment,
+        new Uint8Array(newBuffer.slice(2))
+      ], { type: targetMime });
+
+      return combinedBlob;
+    }
+
+    function normalizeOrientationTag(exifBuffer) {
+      try {
+        const view = new DataView(exifBuffer);
+        if (view.byteLength < 18) return;
+        const tiffOffset = 10;
+        const isLittleEndian = (view.getUint16(tiffOffset, false) === 0x4949);
+
+        const ifd0Offset = view.getUint32(tiffOffset + 4, isLittleEndian);
+        let currentPos = tiffOffset + ifd0Offset;
+        if (currentPos + 2 > view.byteLength) return;
+
+        const entriesCount = view.getUint16(currentPos, isLittleEndian);
+        currentPos += 2;
+
+        for (let i = 0; i < entriesCount; i++) {
+          if (currentPos + 12 > view.byteLength) break;
+          const tag = view.getUint16(currentPos, isLittleEndian);
+
+          if (tag === 0x0112) {
+            view.setUint16(currentPos + 8, 1, isLittleEndian);
+            break;
+          }
+          currentPos += 12;
+        }
+      } catch (e) {
+        console.warn('Bỏ qua chuẩn hoá hướng EXIF:', e);
+      }
+    }
+
+    window.downloadSingleFile = function(id) {
+      const item = state.items.find(i => i.id === id);
+      if (!item || !item.convertedBlob) return;
+
+      const ext = getExtensionFromMime(item.convertedFormat);
+      const baseName = item.originalName.substring(0, item.originalName.lastIndexOf('.')) || item.originalName;
+      const downloadName = `${baseName}.${ext}`;
+
+      triggerDownload(item.convertedUrl, downloadName);
+    };
+
+    btnDownloadAll.addEventListener('click', () => {
+      const completedItems = state.items.filter(i => i.status === 'completed' && i.convertedUrl);
+      if (completedItems.length === 0) return;
+
+      completedItems.forEach((item, index) => {
+        setTimeout(() => {
+          window.downloadSingleFile(item.id);
+        }, index * 300);
+      });
+
+      showToast(`Đang tải xuống ${completedItems.length} ảnh...`);
+    });
+
+    function getExtensionFromMime(mime) {
+      if (mime === 'image/webp') return 'webp';
+      if (mime === 'image/jpeg') return 'jpg';
+      if (mime === 'image/png') return 'png';
+      return 'webp';
+    }
+
+    function triggerDownload(url, filename) {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // 14. BỘ CÔNG CỤ SOI CHI TIẾT
+    window.openInspector = function(id) {
+      const item = state.items.find(i => i.id === id);
+      if (!item || !item.convertedUrl) return;
+
+      state.inspector.activeItem = item;
+      state.inspector.viewMode = 'converted';
+
+      const dpr = window.devicePixelRatio || 1;
+      state.inspector.zoom = 1.0 / dpr; // 100% Pixel thật vật lý
+
+      modalFileName.textContent = item.originalName;
+      updateCompareButtonUI();
+
+      document.querySelectorAll('.inspector-controls .preset-btn[data-phys-zoom]').forEach(b => b.classList.remove('active'));
+      const defaultZoomBtn = document.querySelector('.inspector-controls .preset-btn[data-phys-zoom="1"]');
+      if (defaultZoomBtn) defaultZoomBtn.classList.add('active');
+
+      fullscreenInspectorModal.classList.add('active');
+      renderInspectorImage(true);
+    };
+
+    btnToggleCompare.addEventListener('click', () => {
+      if (!state.inspector.activeItem) return;
+      state.inspector.viewMode = (state.inspector.viewMode === 'converted') ? 'original' : 'converted';
+      updateCompareButtonUI();
+      renderInspectorImage(false);
+    });
+
+    function updateCompareButtonUI() {
+      if (state.inspector.viewMode === 'converted') {
+        labelCompressed.className = 'compare-label-active';
+        labelOriginal.className = 'compare-label-inactive';
+      } else {
+        labelCompressed.className = 'compare-label-inactive';
+        labelOriginal.className = 'compare-label-active';
+      }
+    }
+
+    function renderInspectorImage(isInitialCenter = false) {
+      const item = state.inspector.activeItem;
+      if (!item) return;
+
+      const isConverted = (state.inspector.viewMode === 'converted');
+      modalInspectorImage.src = isConverted ? item.convertedUrl : item.originalUrl;
+
+      const curWidth = isConverted ? item.convertedWidth : item.originalWidth;
+      const curHeight = isConverted ? item.convertedHeight : item.originalHeight;
+
+      if (isInitialCenter) {
+        centerImageInViewport(curWidth, curHeight);
+      } else {
+        applyInspectorTransform();
+      }
+    }
+
+    function centerImageInViewport(imgW, imgH) {
+      const vpRect = modalViewport.getBoundingClientRect();
+      const scaledW = imgW * state.inspector.zoom;
+      const scaledH = imgH * state.inspector.zoom;
+      
+      state.inspector.panX = Math.round((vpRect.width - scaledW) / 2);
+      state.inspector.panY = Math.round((vpRect.height - scaledH) / 2);
+      applyInspectorTransform();
+    }
+
+    function applyInspectorTransform() {
+      const roundedX = Math.round(state.inspector.panX);
+      const roundedY = Math.round(state.inspector.panY);
+
+      modalImageWrapper.style.transform = `translate(${roundedX}px, ${roundedY}px) scale(${state.inspector.zoom})`;
+      
+      const dpr = window.devicePixelRatio || 1;
+      const physicalPct = Math.round(state.inspector.zoom * dpr * 100);
+      currentZoomText.textContent = `${physicalPct}%`;
+
+      if (physicalPct > 100) {
+        modalInspectorImage.classList.add('pixel-mode');
+      } else {
+        modalInspectorImage.classList.remove('pixel-mode');
+      }
+    }
+
+    document.querySelectorAll('.inspector-controls .preset-btn[data-phys-zoom]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.inspector-controls .preset-btn[data-phys-zoom]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const physMultiplier = parseFloat(btn.getAttribute('data-phys-zoom'));
+        const dpr = window.devicePixelRatio || 1;
+        const newZoom = physMultiplier / dpr;
+        const oldZoom = state.inspector.zoom;
+
+        if (newZoom !== oldZoom) {
+          const rect = modalViewport.getBoundingClientRect();
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+
+          state.inspector.panX = centerX - (centerX - state.inspector.panX) * (newZoom / oldZoom);
+          state.inspector.panY = centerY - (centerY - state.inspector.panY) * (newZoom / oldZoom);
+          state.inspector.zoom = newZoom;
+          applyInspectorTransform();
+        }
+      });
+    });
+
+    btnResetPanZoom.addEventListener('click', () => {
+      const item = state.inspector.activeItem;
+      if (!item) return;
+      const isConverted = (state.inspector.viewMode === 'converted');
+      const curWidth = isConverted ? item.convertedWidth : item.originalWidth;
+      const curHeight = isConverted ? item.convertedHeight : item.originalHeight;
+      centerImageInViewport(curWidth, curHeight);
+    });
+
+    modalViewport.addEventListener('pointerdown', (e) => {
+      state.inspector.isPanning = true;
+      state.inspector.startX = e.clientX - state.inspector.panX;
+      state.inspector.startY = e.clientY - state.inspector.panY;
+      modalViewport.classList.add('grabbing');
+      modalViewport.setPointerCapture(e.pointerId);
+    });
+
+    modalViewport.addEventListener('pointermove', (e) => {
+      if (!state.inspector.isPanning) return;
+      state.inspector.panX = e.clientX - state.inspector.startX;
+      state.inspector.panY = e.clientY - state.inspector.startY;
+      applyInspectorTransform();
+    });
+
+    function endPointerPan(e) {
+      if (state.inspector.isPanning) {
+        state.inspector.isPanning = false;
+        modalViewport.classList.remove('grabbing');
+        try {
+          modalViewport.releasePointerCapture(e.pointerId);
+        } catch (err) {}
+      }
+    }
+
+    modalViewport.addEventListener('pointerup', endPointerPan);
+    modalViewport.addEventListener('pointercancel', endPointerPan);
+
+    // THUẬT TOÁN THU PHÓNG THEO CON TRỎ CHUỘT (ZOOM TO CURSOR)
+    modalViewport.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const dpr = window.devicePixelRatio || 1;
+      const oldZoom = state.inspector.zoom;
+
+      const zoomFactor = e.deltaY < 0 ? 1.25 : 0.8;
+      const newZoom = Math.max(0.1 / dpr, Math.min(oldZoom * zoomFactor, 32.0 / dpr));
+
+      if (newZoom === oldZoom) return;
+
+      const rect = modalViewport.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      state.inspector.panX = mouseX - (mouseX - state.inspector.panX) * (newZoom / oldZoom);
+      state.inspector.panY = mouseY - (mouseY - state.inspector.panY) * (newZoom / oldZoom);
+      state.inspector.zoom = newZoom;
+
+      document.querySelectorAll('.inspector-controls .preset-btn[data-phys-zoom]').forEach(b => {
+        const pz = parseFloat(b.getAttribute('data-phys-zoom'));
+        if (Math.abs((pz / dpr) - newZoom) < 0.01) {
+          b.classList.add('active');
+        } else {
+          b.classList.remove('active');
+        }
+      });
+
+      applyInspectorTransform();
+    }, { passive: false });
+
+    function closeModal() {
+      fullscreenInspectorModal.classList.remove('active');
+      modalInspectorImage.src = '';
+      state.inspector.activeItem = null;
+    }
+
+    btnCloseModal.addEventListener('click', closeModal);
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && fullscreenInspectorModal.classList.contains('active')) {
+        closeModal();
+      }
+    });
+
+    updateUI();
+  </script>
+</body>
+</html>
