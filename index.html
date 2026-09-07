@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chuyển Ảnh Sang Dạng PNG/WebP/JPG - Dương Tấn Chánh</title>
   <style>
     *, *::before, *::after {
@@ -29,10 +29,10 @@
     html, body {
       width: 100%;
       min-height: 100vh;
-      background-color: var(--color-dark-surface);
+      background-color: var(--color-black);
       color: var(--color-white);
       font-family: var(--font-family);
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: normal;
       overflow-x: hidden;
       word-break: normal;
@@ -88,7 +88,7 @@
       border-radius: 0.4rem;
       padding: 1rem 0.5rem;
       text-align: center;
-      background-color: var(--color-card-bg);
+      background-color: var(--color-dark-surface);
       cursor: pointer;
       user-select: none;
       width: 100%;
@@ -98,7 +98,7 @@
 
     .drop-zone.drag-over {
       border-color: var(--color-accent);
-      background-color: var(--color-dark-surface);
+      background-color: var(--color-card-bg);
     }
 
     .drop-zone * {
@@ -131,7 +131,7 @@
 
     /* KHUNG THIẾT LẬP */
     .settings-panel {
-      background-color: var(--color-card-bg);
+      background-color: var(--color-dark-surface);
       border: 2px solid var(--color-border);
       border-radius: 0.4rem;
       padding: 0.6rem;
@@ -164,7 +164,7 @@
 
     .setting-item-full {
       grid-column: 1 / -1;
-      border-top: 2px solid var(--color-dark-surface);
+      border-top: 2px solid var(--color-card-bg);
       padding-top: 0.5rem;
     }
 
@@ -199,7 +199,7 @@
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      background-color: var(--color-dark-surface);
+      background-color: var(--color-card-bg);
       border: 2px solid var(--color-border);
       border-radius: 0.3rem;
       padding: 0.4rem 0.6rem;
@@ -231,7 +231,7 @@
 
     .number-input {
       width: 4.5rem;
-      background-color: var(--color-dark-surface);
+      background-color: var(--color-card-bg);
       border: 2px solid var(--color-border);
       border-radius: 0.3rem;
       color: var(--color-white);
@@ -247,17 +247,12 @@
     }
 
     .input-max-width {
-      width: 5.5rem;
+      width: 6rem;
     }
 
     .unit-text {
       font-weight: bold;
       font-size: 1.15rem;
-    }
-
-    .dim-multiply {
-      font-weight: bold;
-      padding: 0 0.3rem;
     }
 
     .dimension-control-row {
@@ -267,19 +262,34 @@
       flex-wrap: wrap;
     }
 
-    .dimension-panel-hidden {
+    .dimension-sub-panel {
+      margin-top: 0.5rem;
+    }
+
+    .dimension-sub-panel.dimension-panel-hidden {
       display: none;
+    }
+
+    .sub-setting-label {
+      font-size: 1rem;
+      color: var(--color-white);
+      white-space: nowrap;
+    }
+
+    .dimension-note {
+      font-size: 0.95rem;
+      color: var(--color-border);
     }
 
     .preset-scale-buttons {
       display: flex;
       gap: 0.35rem;
       flex-wrap: wrap;
-      margin-top: 0.2rem;
+      margin-top: 0.35rem;
     }
 
     .preset-btn {
-      background-color: var(--color-dark-surface);
+      background-color: var(--color-card-bg);
       border: 2px solid var(--color-border);
       color: var(--color-white);
       border-radius: 0.3rem;
@@ -367,7 +377,7 @@
 
     /* NÚT CÔNG TẮC: ẢNH GỐC / ẢNH NÉN */
     .btn-toggle-compare {
-      background-color: var(--color-dark-surface);
+      background-color: var(--color-card-bg);
       border: 2px solid var(--color-accent);
       color: var(--color-white);
       font-weight: bold;
@@ -423,7 +433,7 @@
     .progress-bar-container {
       width: 100%;
       height: 1rem;
-      background-color: var(--color-card-bg);
+      background-color: var(--color-dark-surface);
       border: 2px solid var(--color-border);
       border-radius: 0.5rem;
       overflow: hidden;
@@ -457,12 +467,12 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 1.5rem 0.5rem;
+      padding: 1rem 0.5rem;
       border: 2px dashed var(--color-border);
       border-radius: 0.4rem;
       text-align: center;
       color: var(--color-border);
-      background-color: var(--color-card-bg);
+      background-color: var(--color-dark-surface);
     }
 
     .empty-state.state-hidden {
@@ -481,7 +491,7 @@
 
     /* THẺ TẬP TIN */
     .file-card {
-      background-color: var(--color-card-bg);
+      background-color: var(--color-dark-surface);
       border: 2px solid var(--color-border);
       border-radius: 0.4rem;
       padding: 0.5rem;
@@ -524,7 +534,7 @@
       font-size: 1.15rem;
       color: var(--color-white);
       word-break: normal;
-      overflow-wrap: anywhere;
+      overflow-wrap: break-word;
       min-width: 0;
       line-height: 1.3;
     }
@@ -544,7 +554,7 @@
       font-weight: bold;
       font-size: 1rem;
       word-break: normal;
-      overflow-wrap: anywhere;
+      overflow-wrap: break-word;
     }
 
     .status-badge {
@@ -569,6 +579,65 @@
       flex-wrap: wrap;
       margin-top: 0.3rem;
       min-width: 0;
+    }
+
+    /* KHỐI THÔNG TIN: KỸ THUẬT NÉN ẢNH CHẤT LƯỢNG CAO */
+    .quality-info-panel {
+      background-color: var(--color-dark-surface);
+      border: 2px solid var(--color-border);
+      border-radius: 0.4rem;
+      padding: 0.8rem;
+      margin-top: 1.25rem;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .quality-info-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: var(--color-accent);
+      margin-bottom: 0.75rem;
+      text-align: left;
+    }
+
+    .quality-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.6rem;
+      width: 100%;
+      min-width: 0;
+    }
+
+    @media (min-width: 52rem) {
+      .quality-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .quality-card {
+      background-color: var(--color-card-bg);
+      border: 2px solid var(--color-dark-surface);
+      border-radius: 0.3rem;
+      padding: 0.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .quality-card-heading {
+      font-size: 1.15rem;
+      font-weight: bold;
+      color: var(--color-accent);
+      line-height: 1.35;
+    }
+
+    .quality-card-content {
+      font-size: 1.1rem;
+      font-weight: normal;
+      color: var(--color-white);
+      line-height: 1.5;
+      word-break: normal;
+      overflow-wrap: break-word;
     }
 
     /* MODAL SOI CHI TIẾT */
@@ -686,7 +755,7 @@
       font-size: 1.05rem;
       box-shadow: 0 0 1rem var(--color-black);
       pointer-events: auto;
-      max-width: 26rem;
+      max-width: 28rem;
       width: 100%;
       display: flex;
       align-items: center;
@@ -762,38 +831,47 @@
         </div>
       </div>
 
-      <!-- 3. KÍCH THƯỚC XUẤT: KHỐNG CHẾ CẢ RỘNG VÀ CAO TỐI ĐA -->
+      <!-- 3. KÍCH THƯỚC ẢNH XUẤT -->
       <div class="setting-item setting-item-full">
         <div class="setting-title">3. Kích thước ảnh xuất</div>
         <div class="radio-pill-group">
           <label class="radio-pill-label">
-            <input type="radio" name="resizeMode" value="percent" checked autocomplete="off">
+            <input type="radio" name="resizeMode" value="original" checked autocomplete="off">
+            Giữ nguyên gốc (100%)
+          </label>
+          <label class="radio-pill-label">
+            <input type="radio" name="resizeMode" value="percent" autocomplete="off">
             Theo tỉ lệ (%)
           </label>
           <label class="radio-pill-label">
-            <input type="radio" name="resizeMode" value="max_dimension" autocomplete="off">
-            Giới hạn khung (Rộng × Cao tối đa)
+            <input type="radio" name="resizeMode" value="longest_edge" autocomplete="off">
+            Giới hạn cạnh dài nhất
           </label>
         </div>
 
-        <div id="scalePercentPanel">
+        <!-- Khung chỉnh phần trăm -->
+        <div id="scalePercentPanel" class="dimension-sub-panel dimension-panel-hidden">
+          <div class="slider-row">
+            <span class="sub-setting-label">Tỉ lệ xuất:</span>
+            <input type="range" class="range-slider" id="scaleRange" min="10" max="100" value="75" autocomplete="off">
+            <input type="number" class="number-input" id="scaleNumber" min="10" max="100" value="75" autocomplete="off">
+            <span class="unit-text">%</span>
+          </div>
           <div class="preset-scale-buttons">
-            <button type="button" class="preset-btn active" data-scale="1.00">100% (Gốc)</button>
-            <button type="button" class="preset-btn" data-scale="0.75">75%</button>
-            <button type="button" class="preset-btn" data-scale="0.50">50%</button>
-            <button type="button" class="preset-btn" data-scale="0.25">25%</button>
+            <button type="button" class="preset-btn" data-scale="100">100%</button>
+            <button type="button" class="preset-btn active" data-scale="75">75%</button>
+            <button type="button" class="preset-btn" data-scale="50">50%</button>
+            <button type="button" class="preset-btn" data-scale="25">25%</button>
           </div>
         </div>
 
-        <div id="maxDimensionPanel" class="dimension-panel-hidden">
+        <!-- Khung giới hạn cạnh dài nhất -->
+        <div id="longestEdgePanel" class="dimension-sub-panel dimension-panel-hidden">
           <div class="dimension-control-row">
-            <span>Rộng tối đa:</span>
-            <input type="number" class="number-input input-max-width" id="maxDimWidth" min="10" max="10000" value="1920" autocomplete="off">
+            <span class="sub-setting-label">Cạnh dài nhất tối đa:</span>
+            <input type="number" class="number-input input-max-width" id="maxLongestEdge" min="50" max="10000" value="1920" autocomplete="off">
             <span class="unit-text">px</span>
-            <span class="dim-multiply">×</span>
-            <span>Cao tối đa:</span>
-            <input type="number" class="number-input input-max-width" id="maxDimHeight" min="10" max="10000" value="1080" autocomplete="off">
-            <span class="unit-text">px</span>
+            <span class="dimension-note">(Tự động co theo tỉ lệ gốc, không làm méo ảnh, không phóng to ảnh nhỏ)</span>
           </div>
         </div>
       </div>
@@ -807,7 +885,7 @@
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
       </svg>
-      Chuyển đổi toàn bộ (<span id="batchCountBadge">0</span>)
+      <span id="btnConvertText">Chuyển đổi</span> (<span id="batchCountBadge">0</span>)
     </button>
 
     <button type="button" class="btn btn-primary" id="btnDownloadAll" disabled>
@@ -847,6 +925,70 @@
   </div>
   <div class="files-list" id="filesListContainer"></div>
 
+  <!-- KHỐI THÔNG TIN: KỸ THUẬT NÉN ẢNH CHẤT LƯỢNG CAO (8 YẾU TỐ ĐẦY ĐỦ) -->
+  <div class="quality-info-panel">
+    <div class="quality-info-title">KỸ THUẬT NÉN ẢNH CHẤT LƯỢNG CAO</div>
+    <div class="quality-grid">
+      
+      <div class="quality-card">
+        <div class="quality-card-heading">1. Giới hạn chất lượng nén lên tới 100%</div>
+        <div class="quality-card-content">
+          Thang nén tối đa 100% cho phép đẩy chất lượng mã hoá của WebP và JPG lên mức cao nhất. Thiết lập mặc định ở mức tiêu chuẩn vàng 93% giúp giữ được độ nét tương đương 99% ảnh gốc nhưng giảm mạnh từ 40% – 70% dung lượng tập tin.
+        </div>
+      </div>
+
+      <div class="quality-card">
+        <div class="quality-card-heading">2. Định dạng không nén mất dữ liệu (Lossless PNG)</div>
+        <div class="quality-card-content">
+          Hỗ trợ chuyển sang PNG – định dạng bảo toàn nguyên vẹn 100% dữ liệu gốc và kênh trong suốt (Alpha channel). Hệ thống tự động khoá thanh giảm chất lượng để đảm bảo mọi điểm ảnh được giữ nguyên vẹn hoàn toàn.
+        </div>
+      </div>
+
+      <div class="quality-card">
+        <div class="quality-card-heading">3. Thuật toán nội suy chất lượng cao (High Smoothing Quality)</div>
+        <div class="quality-card-content">
+          Tích hợp bộ lọc nội suy đa điểm cao cấp trên Canvas (imageSmoothingQuality = 'high'), giúp tính toán mượt mà các điểm ảnh khi co nhỏ, loại bỏ hoàn toàn hiện tượng răng cưa, vỡ hạt hay bậc thang ở các đường viền chi tiết.
+        </div>
+      </div>
+
+      <div class="quality-card">
+        <div class="quality-card-heading">4. Chuẩn hoá không gian màu chuẩn (sRGB Color Space)</div>
+        <div class="quality-card-content">
+          Khởi tạo bề mặt vẽ với không gian màu sRGB chuyên biệt (colorSpace: 'srgb'), đảm bảo màu sắc sau khi chuyển đổi luôn trung thực, không bị xỉn màu hay lệch sắc độ trên các màn hình dải màu rộng (DCI-P3, Retina).
+        </div>
+      </div>
+
+      <div class="quality-card">
+        <div class="quality-card-heading">5. Giải mã ảnh tận dụng phần cứng (Hardware Acceleration)</div>
+        <div class="quality-card-content">
+          Ưu tiên sử dụng API createImageBitmap với khả năng tự động nhận diện góc xoay cảm biến (imageOrientation: 'from-image') và xử lý đa luồng qua GPU/CPU, giúp ảnh hiển thị sắc nét tự nhiên và đúng chiều vật lý.
+        </div>
+      </div>
+
+      <div class="quality-card">
+        <div class="quality-card-heading">6. Bảo toàn kích thước gốc & Cơ chế chống phóng to (Anti-Upscaling)</div>
+        <div class="quality-card-content">
+          Mặc định giữ nguyên 100% kích thước ban đầu. Khi giới hạn kích thước xuất, thuật toán chỉ thu nhỏ ảnh vượt ngưỡng và tuyệt đối không phóng to ảnh nhỏ hơn, triệt tiêu nguy cơ mờ nhoè do phóng đại pixel giả lập.
+        </div>
+      </div>
+
+      <div class="quality-card">
+        <div class="quality-card-heading">7. Bảo toàn siêu dữ liệu gốc (EXIF Preservation)</div>
+        <div class="quality-card-content">
+          Trích xuất phân đoạn siêu dữ liệu APP1 (EXIF) của ảnh gốc và khảm chuẩn xác vào tập tin JPG xuất ra ở kích thước gốc, lưu giữ trọn vẹn thông số chụp ảnh chuyên nghiệp (khẩu độ, ISO, tốc độ, máy ảnh, hồ sơ màu sắc).
+        </div>
+      </div>
+
+      <div class="quality-card">
+        <div class="quality-card-heading">8. Kính lúp soi chi tiết điểm ảnh vật lý (Pixel Inspector tới 1600%)</div>
+        <div class="quality-card-content">
+          Tích hợp công cụ soi ảnh toàn màn hình với các mức phóng đại vật lý từ 100% đến 1600% kèm chế độ làm rõ điểm ảnh (pixel-mode), giúp người dùng trực tiếp kiểm tra từng hạt pixel và so sánh tức thì giữa ảnh nén và ảnh gốc.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- MODAL SOI CHI TIẾT TOÀN MÀN HÌNH -->
   <div class="fullscreen-modal" id="fullscreenInspectorModal">
     <div class="modal-header">
@@ -857,14 +999,12 @@
       </div>
 
       <div class="inspector-controls">
-        <!-- NÚT DUY NHẤT: ẢNH GỐC / ẢNH NÉN -->
         <button type="button" class="btn-toggle-compare" id="btnToggleCompare" title="Phím Space để đổi nhanh">
           <span id="labelCompressed" class="compare-label-active">Ảnh Nén</span>
           <span class="compare-slash">/</span>
           <span id="labelOriginal" class="compare-label-inactive">Ảnh Gốc</span>
         </button>
 
-        <!-- CÁC MỨC ZOOM VẬT LÝ -->
         <button type="button" class="preset-btn active" data-phys-zoom="1">100%</button>
         <button type="button" class="preset-btn" data-phys-zoom="2">200%</button>
         <button type="button" class="preset-btn" data-phys-zoom="4">400%</button>
@@ -894,7 +1034,6 @@
     const state = {
       items: [],
       isProcessing: false,
-      selectedScale: 1.0,
       concurrencyLimit: Math.max(1, Math.min(navigator.hardwareConcurrency || 4, 8)),
       inspector: {
         activeItem: null,
@@ -924,6 +1063,7 @@
     const filesListContainer = document.getElementById('filesListContainer');
     const emptyListState = document.getElementById('emptyListState');
     const btnConvertAll = document.getElementById('btnConvertAll');
+    const btnConvertText = document.getElementById('btnConvertText');
     const btnDownloadAll = document.getElementById('btnDownloadAll');
     const btnClearList = document.getElementById('btnClearList');
     const batchCountBadge = document.getElementById('batchCountBadge');
@@ -934,9 +1074,10 @@
     const qualitySettingGroup = document.getElementById('qualitySettingGroup');
 
     const scalePercentPanel = document.getElementById('scalePercentPanel');
-    const maxDimensionPanel = document.getElementById('maxDimensionPanel');
-    const maxDimWidth = document.getElementById('maxDimWidth');
-    const maxDimHeight = document.getElementById('maxDimHeight');
+    const longestEdgePanel = document.getElementById('longestEdgePanel');
+    const scaleRange = document.getElementById('scaleRange');
+    const scaleNumber = document.getElementById('scaleNumber');
+    const maxLongestEdge = document.getElementById('maxLongestEdge');
 
     const progressWrapper = document.getElementById('progressWrapper');
     const progressBarFill = document.getElementById('progressBarFill');
@@ -967,7 +1108,7 @@
         setTimeout(() => {
           if (toast.parentElement) toast.remove();
         }, 300);
-      }, 3000);
+      }, 3500);
     }
 
     function formatBytes(bytes, decimals = 2) {
@@ -990,17 +1131,55 @@
     }
 
     qualityRange.addEventListener('input', (e) => syncQuality(e.target.value));
-
     qualityNumber.addEventListener('input', (e) => {
-      const val = e.target.value;
-      if (val === '') return;
-      syncQuality(val);
+      if (e.target.value === '') return;
+      syncQuality(e.target.value);
+    });
+    qualityNumber.addEventListener('blur', (e) => {
+      if (e.target.value === '' || isNaN(parseInt(e.target.value, 10))) syncQuality(93);
     });
 
-    qualityNumber.addEventListener('blur', (e) => {
-      if (e.target.value === '' || isNaN(parseInt(e.target.value, 10))) {
-        syncQuality(93);
-      }
+    function syncScale(val) {
+      let s = parseInt(val, 10);
+      if (isNaN(s)) s = 75;
+      if (s < 10) s = 10;
+      if (s > 100) s = 100;
+      scaleRange.value = s;
+      scaleNumber.value = s;
+
+      document.querySelectorAll('#scalePercentPanel .preset-btn').forEach(btn => {
+        if (parseInt(btn.getAttribute('data-scale'), 10) === s) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    scaleRange.addEventListener('input', (e) => syncScale(e.target.value));
+    scaleNumber.addEventListener('input', (e) => {
+      if (e.target.value === '') return;
+      syncScale(e.target.value);
+    });
+    scaleNumber.addEventListener('blur', (e) => {
+      if (e.target.value === '' || isNaN(parseInt(e.target.value, 10))) syncScale(75);
+    });
+
+    document.querySelectorAll('#scalePercentPanel .preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        syncScale(btn.getAttribute('data-scale'));
+      });
+    });
+
+    // Live validation cho cạnh dài nhất
+    maxLongestEdge.addEventListener('input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      if (!isNaN(val) && val > 10000) e.target.value = 10000;
+    });
+
+    maxLongestEdge.addEventListener('blur', (e) => {
+      const val = parseInt(e.target.value, 10);
+      if (isNaN(val) || val < 50) e.target.value = 1920;
     });
 
     document.querySelectorAll('input[name="targetFormat"]').forEach(radio => {
@@ -1015,21 +1194,17 @@
 
     document.querySelectorAll('input[name="resizeMode"]').forEach(radio => {
       radio.addEventListener('change', (e) => {
-        if (e.target.value === 'percent') {
+        const val = e.target.value;
+        if (val === 'percent') {
           scalePercentPanel.classList.remove('dimension-panel-hidden');
-          maxDimensionPanel.classList.add('dimension-panel-hidden');
+          longestEdgePanel.classList.add('dimension-panel-hidden');
+        } else if (val === 'longest_edge') {
+          scalePercentPanel.classList.add('dimension-panel-hidden');
+          longestEdgePanel.classList.remove('dimension-panel-hidden');
         } else {
           scalePercentPanel.classList.add('dimension-panel-hidden');
-          maxDimensionPanel.classList.remove('dimension-panel-hidden');
+          longestEdgePanel.classList.add('dimension-panel-hidden');
         }
-      });
-    });
-
-    document.querySelectorAll('.preset-scale-buttons .preset-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.preset-scale-buttons .preset-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.selectedScale = parseFloat(btn.getAttribute('data-scale'));
       });
     });
 
@@ -1068,7 +1243,12 @@
       }
     });
 
+    // Sự kiện Dán: Bỏ qua nếu đang gõ trong ô input
     window.addEventListener('paste', (e) => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+        return;
+      }
+
       if (e.clipboardData && e.clipboardData.items) {
         const pastedFiles = [];
         for (let i = 0; i < e.clipboardData.items.length; i++) {
@@ -1165,8 +1345,11 @@
     }
 
     function updateUI() {
-      batchCountBadge.textContent = state.items.length;
+      const pendingCount = state.items.filter(i => i.status !== 'completed').length;
+      
       if (state.items.length === 0) {
+        batchCountBadge.textContent = '0';
+        btnConvertText.textContent = 'Chuyển đổi';
         emptyListState.classList.remove('state-hidden');
         btnConvertAll.disabled = true;
         btnDownloadAll.disabled = true;
@@ -1176,6 +1359,14 @@
         btnConvertAll.disabled = state.isProcessing;
         btnClearList.disabled = state.isProcessing;
         btnDownloadAll.disabled = !state.items.some(i => i.status === 'completed');
+
+        if (pendingCount > 0) {
+          batchCountBadge.textContent = pendingCount;
+          btnConvertText.textContent = 'Chuyển đổi';
+        } else {
+          batchCountBadge.textContent = state.items.length;
+          btnConvertText.textContent = 'Chuyển đổi lại';
+        }
       }
 
       renderFileList();
@@ -1201,7 +1392,7 @@
         if (item.status === 'completed') {
           outputDetailsHtml = `
             <div class="file-output-highlight">
-              Xuất: ${item.convertedWidth} x ${item.convertedHeight} px | 
+              Xuất: ${item.convertedWidth} × ${item.convertedHeight} px | 
               ${formatBytes(item.convertedSize)} | ${item.convertedFormat.replace('image/', '').toUpperCase()}
             </div>
           `;
@@ -1215,7 +1406,7 @@
           <div class="file-details">
             <div class="file-name">${escapeHtml(item.originalName)}</div>
             <div class="file-meta-row">
-              <span>Gốc: ${item.originalWidth} x ${item.originalHeight} px</span>
+              <span>Gốc: ${item.originalWidth} × ${item.originalHeight} px</span>
               <span>${formatBytes(item.originalSize)}</span>
               ${statusBadgeHtml}
             </div>
@@ -1267,6 +1458,11 @@
     btnConvertAll.addEventListener('click', async () => {
       if (state.isProcessing || state.items.length === 0) return;
 
+      let itemsToProcess = state.items.filter(i => i.status !== 'completed');
+      if (itemsToProcess.length === 0) {
+        itemsToProcess = [...state.items];
+      }
+
       state.isProcessing = true;
       updateUI();
       progressWrapper.classList.add('progress-active');
@@ -1276,15 +1472,11 @@
       const targetFormat = document.querySelector('input[name="targetFormat"]:checked').value;
       const quality = parseInt(qualityNumber.value, 10) / 100;
       const resizeMode = document.querySelector('input[name="resizeMode"]:checked').value;
-      const scaleFactor = state.selectedScale;
+      const scalePercent = parseInt(scaleNumber.value, 10) || 75;
 
-      let maxConstraintWidth = parseInt(maxDimWidth.value, 10);
-      if (isNaN(maxConstraintWidth) || maxConstraintWidth < 10) maxConstraintWidth = 1920;
+      let maxEdgeVal = parseInt(maxLongestEdge.value, 10);
+      if (isNaN(maxEdgeVal) || maxEdgeVal < 50) maxEdgeVal = 1920;
 
-      let maxConstraintHeight = parseInt(maxDimHeight.value, 10);
-      if (isNaN(maxConstraintHeight) || maxConstraintHeight < 10) maxConstraintHeight = 1080;
-
-      const itemsToProcess = [...state.items];
       const totalCount = itemsToProcess.length;
       let completedCount = 0;
 
@@ -1304,9 +1496,8 @@
               targetFormat,
               quality,
               resizeMode,
-              scaleFactor,
-              maxConstraintWidth,
-              maxConstraintHeight
+              scalePercent,
+              maxLongestEdge: maxEdgeVal
             });
             item.status = 'completed';
           } catch (err) {
@@ -1330,19 +1521,20 @@
 
       await Promise.all(activeWorkers);
 
-      let totalOrigSize = 0;
-      let totalNewSize = 0;
-      state.items.forEach(i => {
+      // Tính tổng dung lượng chính xác trên danh sách vừa xử lý
+      let batchOrigSize = 0;
+      let batchNewSize = 0;
+      itemsToProcess.forEach(i => {
         if (i.status === 'completed' && i.convertedSize > 0) {
-          totalOrigSize += i.originalSize;
-          totalNewSize += i.convertedSize;
+          batchOrigSize += i.originalSize;
+          batchNewSize += i.convertedSize;
         }
       });
 
       state.isProcessing = false;
-      if (totalOrigSize > 0 && totalNewSize > 0) {
-        const totalSaved = Math.max(0, ((totalOrigSize - totalNewSize) / totalOrigSize) * 100).toFixed(1);
-        progressStatusText.textContent = `Đã nén xong: ${formatBytes(totalOrigSize)} → ${formatBytes(totalNewSize)} (Tiết kiệm ${totalSaved}%)`;
+      if (batchOrigSize > 0 && batchNewSize > 0) {
+        const totalSaved = Math.max(0, ((batchOrigSize - batchNewSize) / batchOrigSize) * 100).toFixed(1);
+        progressStatusText.textContent = `Đã nén ${completedCount} ảnh: ${formatBytes(batchOrigSize)} → ${formatBytes(batchNewSize)} (Tiết kiệm ${totalSaved}%)`;
       } else {
         progressStatusText.textContent = `Chuyển đổi hoàn tất ${completedCount} ảnh!`;
       }
@@ -1351,26 +1543,21 @@
       showToast(`Chuyển đổi thành công ${completedCount} ảnh!`);
     });
 
-    // Thuật toán khống chế cả Rộng và Cao tối đa cùng lúc (Bounding Box Scaling)
     async function convertSingleImage(item, options) {
       let outWidth = item.originalWidth;
       let outHeight = item.originalHeight;
 
       if (options.resizeMode === 'percent') {
-        const factor = Math.min(options.scaleFactor, 1.0);
+        const factor = Math.max(0.05, Math.min(options.scalePercent / 100, 1.0));
         outWidth = Math.max(1, Math.round(item.originalWidth * factor));
         outHeight = Math.max(1, Math.round(item.originalHeight * factor));
-      } else {
-        // Áp dụng đồng thời cả 2 điều kiện chiều ngang và chiều dọc
-        const scaleW = options.maxConstraintWidth / item.originalWidth;
-        const scaleH = options.maxConstraintHeight / item.originalHeight;
-
-        // Chọn tỉ lệ co mạnh hơn để đảm bảo KHÔNG CẠNH NÀO vượt giới hạn
-        // Đồng thời tuyệt đối không phóng to ảnh (scale <= 1.0)
-        const finalScale = Math.min(1.0, scaleW, scaleH);
-
-        outWidth = Math.max(1, Math.round(item.originalWidth * finalScale));
-        outHeight = Math.max(1, Math.round(item.originalHeight * finalScale));
+      } else if (options.resizeMode === 'longest_edge') {
+        const longestEdge = Math.max(item.originalWidth, item.originalHeight);
+        if (longestEdge > options.maxLongestEdge) {
+          const scale = options.maxLongestEdge / longestEdge;
+          outWidth = Math.max(1, Math.round(item.originalWidth * scale));
+          outHeight = Math.max(1, Math.round(item.originalHeight * scale));
+        }
       }
 
       const MAX_SAFE_PIXELS = 36000000;
@@ -1419,7 +1606,8 @@
         }, options.targetFormat, options.quality);
       });
 
-      if (options.targetFormat === 'image/jpeg') {
+      // Chỉ khảm EXIF nếu ảnh giữ nguyên kích thước gốc để tránh xung đột thông số phân giải
+      if (options.targetFormat === 'image/jpeg' && outWidth === item.originalWidth && outHeight === item.originalHeight) {
         try {
           convertedBlob = await tryInjectExif(item.file, convertedBlob, options.targetFormat);
         } catch (exifErr) {
@@ -1481,13 +1669,11 @@
       const newView = new DataView(newBuffer);
       if (newView.getUint16(0, false) !== 0xFFD8) return newBlob;
 
-      const combinedBlob = new Blob([
+      return new Blob([
         new Uint8Array(newBuffer.slice(0, 2)),
         exifSegment,
         new Uint8Array(newBuffer.slice(2))
       ], { type: targetMime });
-
-      return combinedBlob;
     }
 
     function normalizeOrientationTag(exifBuffer) {
@@ -1515,7 +1701,7 @@
           currentPos += 12;
         }
       } catch (e) {
-        console.warn('Bỏ qua chuẩn hoá hướng EXIF do dữ liệu không tiêu chuẩn:', e);
+        console.warn('Bỏ qua chuẩn hoá hướng EXIF:', e);
       }
     }
 
@@ -1534,13 +1720,15 @@
       const completedItems = state.items.filter(i => i.status === 'completed' && i.convertedUrl);
       if (completedItems.length === 0) return;
 
+      if (completedItems.length > 2) {
+        showToast(`Đang tải ${completedItems.length} tập tin. Vui lòng chọn "Cho phép" nếu trình duyệt hỏi quyền tải.`);
+      }
+
       completedItems.forEach((item, index) => {
         setTimeout(() => {
           window.downloadSingleFile(item.id);
-        }, index * 300);
+        }, index * 500);
       });
-
-      showToast(`Đang tải xuống ${completedItems.length} ảnh...`);
     });
 
     function getExtensionFromMime(mime) {
@@ -1559,7 +1747,7 @@
       document.body.removeChild(a);
     }
 
-    // 14. BỘ CÔNG CỤ SOI CHI TIẾT
+    // BỘ CÔNG CỤ SOI CHI TIẾT (CHUẨN TOẠ ĐỘ & ĐỒNG BỘ PHÍM ZOOM)
     window.openInspector = function(id) {
       const item = state.items.find(i => i.id === id);
       if (!item) return;
@@ -1572,7 +1760,6 @@
 
       modalFileName.textContent = item.originalName;
       updateCompareButtonUI();
-
       updatePresetButtonsUI(1.0 / dpr);
 
       fullscreenInspectorModal.classList.add('active');
@@ -1580,13 +1767,41 @@
     };
 
     btnToggleCompare.addEventListener('click', () => {
-      if (!state.inspector.activeItem) return;
-      if (!state.inspector.activeItem.convertedUrl) {
-        showToast('Ảnh này chưa chuyển đổi nên chỉ có bản gốc!');
+      const item = state.inspector.activeItem;
+      if (!item) return;
+      if (!item.convertedUrl) {
+        showToast('Tập tin này chưa nén nên chỉ có bản gốc!');
         return;
       }
-      state.inspector.viewMode = (state.inspector.viewMode === 'converted') ? 'original' : 'converted';
+
+      const rect = modalViewport.getBoundingClientRect();
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const prevIsConverted = (state.inspector.viewMode === 'converted');
+      const prevW = prevIsConverted ? item.convertedWidth : item.originalWidth;
+      const prevH = prevIsConverted ? item.convertedHeight : item.originalHeight;
+
+      state.inspector.viewMode = prevIsConverted ? 'original' : 'converted';
+
+      const nextIsConverted = (state.inspector.viewMode === 'converted');
+      const nextW = nextIsConverted ? item.convertedWidth : item.originalWidth;
+      const nextH = nextIsConverted ? item.convertedHeight : item.originalHeight;
+
+      // Cân chỉnh toạ độ giữ nguyên tầm ngắm trực quan
+      if (prevW > 0 && nextW > 0 && prevW !== nextW) {
+        const u = (centerX - state.inspector.panX) / (prevW * state.inspector.zoom);
+        const v = (centerY - state.inspector.panY) / (prevH * state.inspector.zoom);
+
+        const ratio = prevW / nextW;
+        state.inspector.zoom = state.inspector.zoom * ratio;
+
+        state.inspector.panX = centerX - u * (nextW * state.inspector.zoom);
+        state.inspector.panY = centerY - v * (nextH * state.inspector.zoom);
+      }
+
       updateCompareButtonUI();
+      updatePresetButtonsUI(state.inspector.zoom);
       renderInspectorImage(false);
     });
 
@@ -1706,9 +1921,6 @@
       }
     });
 
-    /* ==========================================================================
-       XỬ LÝ CẢM ỨNG ĐA ĐIỂM & CHUỘT
-       ========================================================================== */
     modalViewport.addEventListener('pointerdown', (e) => {
       touchState.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
       modalViewport.setPointerCapture(e.pointerId);
@@ -1787,7 +1999,6 @@
     modalViewport.addEventListener('pointerup', endPointerInteraction);
     modalViewport.addEventListener('pointercancel', endPointerInteraction);
 
-    // THUẬT TOÁN THU PHÓNG THEO CON TRỎ CHUỘT (ZOOM TO CURSOR)
     modalViewport.addEventListener('wheel', (e) => {
       e.preventDefault();
       const dpr = window.devicePixelRatio || 1;
@@ -1853,6 +2064,7 @@
     });
 
     syncQuality(93);
+    syncScale(75);
     updateUI();
   </script>
 </body>
