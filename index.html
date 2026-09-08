@@ -184,11 +184,6 @@
       gap: 0.25rem;
     }
 
-    .quality-display-badge {
-      color: var(--color-accent);
-      font-weight: bold;
-    }
-
     .radio-pill-group {
       display: flex;
       flex-wrap: wrap;
@@ -216,17 +211,27 @@
       accent-color: var(--color-accent);
     }
 
-    .slider-row {
+    /* BỐ CỤC ĐIỀU KHIỂN: Ô SỐ TRÊN, THANH TRƯỢT DƯỚI */
+    .control-header-row {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      justify-content: space-between;
+      gap: 0.5rem;
+      width: 100%;
     }
 
-    .range-slider {
-      flex: 1;
+    .input-unit-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .range-slider-full {
+      width: 100%;
       height: 0.7rem;
       accent-color: var(--color-accent);
       cursor: pointer;
+      margin-top: 0.35rem;
     }
 
     .number-input {
@@ -271,8 +276,9 @@
     }
 
     .sub-setting-label {
-      font-size: 1rem;
-      color: var(--color-white);
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--color-accent);
       white-space: nowrap;
     }
 
@@ -285,7 +291,7 @@
       display: flex;
       gap: 0.35rem;
       flex-wrap: wrap;
-      margin-top: 0.35rem;
+      margin-top: 0.45rem;
     }
 
     .preset-btn {
@@ -818,17 +824,16 @@
         </div>
       </div>
 
-      <!-- 2. CHẤT LƯỢNG ẢNH (MẶC ĐỊNH 93%) -->
+      <!-- 2. CHẤT LƯỢNG NÉN (Ô SỐ TRÊN, THANH TRƯỢT DƯỚI) -->
       <div class="setting-item" id="qualitySettingGroup">
-        <div class="setting-title">
-          <span>2. Chất lượng nén</span>
-          <span id="qualityTextDisplay" class="quality-display-badge">93%</span>
+        <div class="control-header-row">
+          <span class="setting-title">2. Chất lượng nén</span>
+          <div class="input-unit-group">
+            <input type="number" class="number-input" id="qualityNumber" min="1" max="100" value="93" autocomplete="off">
+            <span class="unit-text">%</span>
+          </div>
         </div>
-        <div class="slider-row">
-          <input type="range" class="range-slider" id="qualityRange" min="1" max="100" value="93" autocomplete="off">
-          <input type="number" class="number-input" id="qualityNumber" min="1" max="100" value="93" autocomplete="off">
-          <span class="unit-text">%</span>
-        </div>
+        <input type="range" class="range-slider-full" id="qualityRange" min="1" max="100" value="93" autocomplete="off">
       </div>
 
       <!-- 3. KÍCH THƯỚC ẢNH XUẤT -->
@@ -849,18 +854,21 @@
           </label>
         </div>
 
-        <!-- Khung chỉnh phần trăm -->
+        <!-- Khung chỉnh phần trăm (Mặc định 50%) -->
         <div id="scalePercentPanel" class="dimension-sub-panel dimension-panel-hidden">
-          <div class="slider-row">
-            <span class="sub-setting-label">Tỉ lệ xuất:</span>
-            <input type="range" class="range-slider" id="scaleRange" min="10" max="100" value="75" autocomplete="off">
-            <input type="number" class="number-input" id="scaleNumber" min="10" max="100" value="75" autocomplete="off">
-            <span class="unit-text">%</span>
+          <div class="control-header-row">
+            <span class="sub-setting-label">Kích thước:</span>
+            <div class="input-unit-group">
+              <input type="number" class="number-input" id="scaleNumber" min="10" max="100" value="50" autocomplete="off">
+              <span class="unit-text">%</span>
+            </div>
           </div>
+          <input type="range" class="range-slider-full" id="scaleRange" min="10" max="100" value="50" autocomplete="off">
+          
           <div class="preset-scale-buttons">
             <button type="button" class="preset-btn" data-scale="100">100%</button>
-            <button type="button" class="preset-btn active" data-scale="75">75%</button>
-            <button type="button" class="preset-btn" data-scale="50">50%</button>
+            <button type="button" class="preset-btn" data-scale="75">75%</button>
+            <button type="button" class="preset-btn active" data-scale="50">50%</button>
             <button type="button" class="preset-btn" data-scale="25">25%</button>
           </div>
         </div>
@@ -892,7 +900,7 @@
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
       </svg>
-      Tải xuống tất cả
+      <span id="btnDownloadText">Tải xuống tất cả</span>
     </button>
 
     <button type="button" class="btn btn-danger" id="btnClearList" disabled>
@@ -925,7 +933,7 @@
   </div>
   <div class="files-list" id="filesListContainer"></div>
 
-  <!-- KHỐI THÔNG TIN: KỸ THUẬT NÉN ẢNH CHẤT LƯỢNG CAO (8 YẾU TỐ ĐẦY ĐỦ) -->
+  <!-- KHỐI THÔNG TIN: KỸ THUẬT NÉN ẢNH CHẤT LƯỢNG CAO -->
   <div class="quality-info-panel">
     <div class="quality-info-title">KỸ THUẬT NÉN ẢNH CHẤT LƯỢNG CAO</div>
     <div class="quality-grid">
@@ -1034,6 +1042,8 @@
     const state = {
       items: [],
       isProcessing: false,
+      isDownloading: false,
+      settingsChanged: false,
       concurrencyLimit: Math.max(1, Math.min(navigator.hardwareConcurrency || 4, 8)),
       inspector: {
         activeItem: null,
@@ -1065,12 +1075,12 @@
     const btnConvertAll = document.getElementById('btnConvertAll');
     const btnConvertText = document.getElementById('btnConvertText');
     const btnDownloadAll = document.getElementById('btnDownloadAll');
+    const btnDownloadText = document.getElementById('btnDownloadText');
     const btnClearList = document.getElementById('btnClearList');
     const batchCountBadge = document.getElementById('batchCountBadge');
 
     const qualityRange = document.getElementById('qualityRange');
     const qualityNumber = document.getElementById('qualityNumber');
-    const qualityTextDisplay = document.getElementById('qualityTextDisplay');
     const qualitySettingGroup = document.getElementById('qualitySettingGroup');
 
     const scalePercentPanel = document.getElementById('scalePercentPanel');
@@ -1120,6 +1130,11 @@
       return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 
+    function notifySettingsChanged() {
+      state.settingsChanged = true;
+      updateUI();
+    }
+
     function syncQuality(val) {
       let q = parseInt(val, 10);
       if (isNaN(q)) q = 93;
@@ -1127,21 +1142,34 @@
       if (q > 100) q = 100;
       qualityRange.value = q;
       qualityNumber.value = q;
-      qualityTextDisplay.textContent = q + '%';
     }
 
-    qualityRange.addEventListener('input', (e) => syncQuality(e.target.value));
+    qualityRange.addEventListener('input', (e) => {
+      syncQuality(e.target.value);
+      notifySettingsChanged();
+    });
+
     qualityNumber.addEventListener('input', (e) => {
       if (e.target.value === '') return;
-      syncQuality(e.target.value);
+      let q = parseInt(e.target.value, 10);
+      if (!isNaN(q) && q > 100) {
+        q = 100;
+        qualityNumber.value = 100;
+      }
+      if (!isNaN(q)) qualityRange.value = q;
+      notifySettingsChanged();
     });
+
     qualityNumber.addEventListener('blur', (e) => {
-      if (e.target.value === '' || isNaN(parseInt(e.target.value, 10))) syncQuality(93);
+      let q = parseInt(e.target.value, 10);
+      if (isNaN(q) || q < 1) q = 93;
+      if (q > 100) q = 100;
+      syncQuality(q);
     });
 
     function syncScale(val) {
       let s = parseInt(val, 10);
-      if (isNaN(s)) s = 75;
+      if (isNaN(s)) s = 50;
       if (s < 10) s = 10;
       if (s > 100) s = 100;
       scaleRange.value = s;
@@ -1156,25 +1184,42 @@
       });
     }
 
-    scaleRange.addEventListener('input', (e) => syncScale(e.target.value));
+    scaleRange.addEventListener('input', (e) => {
+      syncScale(e.target.value);
+      notifySettingsChanged();
+    });
+
     scaleNumber.addEventListener('input', (e) => {
       if (e.target.value === '') return;
-      syncScale(e.target.value);
+      let s = parseInt(e.target.value, 10);
+      if (!isNaN(s) && s > 100) {
+        s = 100;
+        scaleNumber.value = 100;
+      }
+      if (!isNaN(s)) scaleRange.value = s;
+      notifySettingsChanged();
     });
+
     scaleNumber.addEventListener('blur', (e) => {
-      if (e.target.value === '' || isNaN(parseInt(e.target.value, 10))) syncScale(75);
+      let s = parseInt(e.target.value, 10);
+      if (isNaN(s) || s < 10) s = 50;
+      if (s > 100) s = 100;
+      syncScale(s);
     });
 
     document.querySelectorAll('#scalePercentPanel .preset-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         syncScale(btn.getAttribute('data-scale'));
+        notifySettingsChanged();
       });
     });
 
-    // Live validation cho cạnh dài nhất
     maxLongestEdge.addEventListener('input', (e) => {
-      const val = parseInt(e.target.value, 10);
-      if (!isNaN(val) && val > 10000) e.target.value = 10000;
+      let val = parseInt(e.target.value, 10);
+      if (!isNaN(val) && val > 10000) {
+        e.target.value = 10000;
+      }
+      notifySettingsChanged();
     });
 
     maxLongestEdge.addEventListener('blur', (e) => {
@@ -1189,6 +1234,7 @@
         } else {
           qualitySettingGroup.classList.remove('group-disabled');
         }
+        notifySettingsChanged();
       });
     });
 
@@ -1205,6 +1251,7 @@
           scalePercentPanel.classList.add('dimension-panel-hidden');
           longestEdgePanel.classList.add('dimension-panel-hidden');
         }
+        notifySettingsChanged();
       });
     });
 
@@ -1224,10 +1271,15 @@
     window.addEventListener('dragleave', (e) => {
       e.preventDefault();
       dragCounter--;
-      if (dragCounter <= 0) {
+      if (dragCounter <= 0 || e.clientX <= 0 || e.clientY <= 0 || e.clientX >= window.innerWidth || e.clientY >= window.innerHeight) {
         dragCounter = 0;
         dropZone.classList.remove('drag-over');
       }
+    });
+
+    window.addEventListener('dragend', () => {
+      dragCounter = 0;
+      dropZone.classList.remove('drag-over');
     });
 
     window.addEventListener('dragover', (e) => {
@@ -1243,7 +1295,6 @@
       }
     });
 
-    // Sự kiện Dán: Bỏ qua nếu đang gõ trong ô input
     window.addEventListener('paste', (e) => {
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
         return;
@@ -1272,19 +1323,55 @@
       }
     });
 
-    async function handleFilesSelected(fileList) {
-      const validTypes = [
-        'image/png', 'image/jpeg', 'image/jpg', 'image/webp',
-        'image/bmp', 'image/svg+xml', 'image/gif', 'image/x-icon',
-        'image/vnd.microsoft.icon', 'image/avif'
-      ];
+    // Kiểm tra chữ ký nhị phân (Magic Bytes) toàn diện: PNG, JPG, GIF, BMP, WebP, ICO, AVIF, SVG
+    async function verifyImageFile(file) {
+      if (file.size === 0) return false;
 
+      try {
+        const slice = file.slice(0, 32);
+        const buffer = await slice.arrayBuffer();
+        const bytes = new Uint8Array(buffer);
+
+        if (bytes.length < 4) return false;
+
+        // PNG: 89 50 4E 47
+        if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) return true;
+        // JPG: FF D8 FF
+        if (bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF) return true;
+        // GIF: 47 49 46 38
+        if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x38) return true;
+        // BMP: 42 4D
+        if (bytes[0] === 0x42 && bytes[1] === 0x4D) return true;
+        // WebP: 52 49 46 46 .... 57 45 42 50
+        if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46) return true;
+        // ICO: 00 00 01 00 (icon) hoặc 00 00 02 00 (cursor)
+        if (bytes[0] === 0x00 && bytes[1] === 0x00 && (bytes[2] === 0x01 || bytes[2] === 0x02) && bytes[3] === 0x00) return true;
+
+        // AVIF: Box type 'ftyp' tại byte 4-7, theo sau là 'avif' / 'avis' / 'mif1'
+        if (bytes.length >= 12 && bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
+          const brand = String.fromCharCode(bytes[8], bytes[9], bytes[10], bytes[11]);
+          if (brand === 'avif' || brand === 'avis' || brand === 'mif1') return true;
+        }
+        
+        // SVG: Kiểm tra XML / SVG text
+        if (file.type === 'image/svg+xml' || file.name.match(/\.svg$/i)) {
+          const textSlice = await file.slice(0, 256).text();
+          if (textSlice.includes('<svg') || textSlice.includes('<?xml')) return true;
+        }
+      } catch (err) {
+        return false;
+      }
+      return false;
+    }
+
+    async function handleFilesSelected(fileList) {
       let addedCount = 0;
       for (let i = 0; i < fileList.length; i++) {
         const file = fileList[i];
-        const isImage = validTypes.includes(file.type) || file.name.match(/\.(png|jpe?g|webp|bmp|svg|gif|ico|avif)$/i);
-        if (!isImage) {
-          showToast(`Bỏ qua: ${file.name} (Không đúng định dạng)`, true);
+        
+        const isValid = await verifyImageFile(file);
+        if (!isValid) {
+          showToast(`Bỏ qua: ${file.name} (Không phải tập tin ảnh hợp lệ)`, true);
           continue;
         }
 
@@ -1321,7 +1408,30 @@
       }
     }
 
-    function readImageDimensions(file, objectUrl) {
+    async function readImageDimensions(file, objectUrl) {
+      if (file.type === 'image/svg+xml' || file.name.match(/\.svg$/i)) {
+        try {
+          const text = await file.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(text, 'image/svg+xml');
+          const svgEl = doc.querySelector('svg');
+          if (svgEl) {
+            const vb = svgEl.getAttribute('viewBox');
+            if (vb) {
+              const parts = vb.trim().split(/[\s,]+/).map(Number);
+              if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
+                return { width: Math.round(parts[2]), height: Math.round(parts[3]) };
+              }
+            }
+            const w = parseFloat(svgEl.getAttribute('width'));
+            const h = parseFloat(svgEl.getAttribute('height'));
+            if (!isNaN(w) && !isNaN(h) && w > 0 && h > 0) {
+              return { width: Math.round(w), height: Math.round(h) };
+            }
+          }
+        } catch (e) {}
+      }
+
       return new Promise((resolve) => {
         if ('createImageBitmap' in window) {
           createImageBitmap(file, { imageOrientation: 'from-image' })
@@ -1356,11 +1466,14 @@
         btnClearList.disabled = true;
       } else {
         emptyListState.classList.add('state-hidden');
-        btnConvertAll.disabled = state.isProcessing;
-        btnClearList.disabled = state.isProcessing;
-        btnDownloadAll.disabled = !state.items.some(i => i.status === 'completed');
+        btnConvertAll.disabled = state.isProcessing || state.isDownloading;
+        btnClearList.disabled = state.isProcessing || state.isDownloading;
+        btnDownloadAll.disabled = state.isProcessing || state.isDownloading || !state.items.some(i => i.status === 'completed');
 
-        if (pendingCount > 0) {
+        if (state.settingsChanged && state.items.some(i => i.status === 'completed')) {
+          batchCountBadge.textContent = state.items.length;
+          btnConvertText.textContent = 'Áp dụng thiết lập mới';
+        } else if (pendingCount > 0) {
           batchCountBadge.textContent = pendingCount;
           btnConvertText.textContent = 'Chuyển đổi';
         } else {
@@ -1413,11 +1526,11 @@
             ${outputDetailsHtml}
             <div class="file-card-actions">
               ${isCompleted ? `
-                <button type="button" class="btn btn-success btn-small" onclick="downloadSingleFile('${item.id}')">
+                <button type="button" class="btn btn-success btn-small" ${state.isDownloading ? 'disabled' : ''} onclick="downloadSingleFile('${item.id}')">
                   Tải về
                 </button>
               ` : ''}
-              <button type="button" class="btn btn-danger btn-small" ${state.isProcessing ? 'disabled' : ''} onclick="removeFile('${item.id}')">
+              <button type="button" class="btn btn-danger btn-small" ${(state.isProcessing || state.isDownloading) ? 'disabled' : ''} onclick="removeFile('${item.id}')">
                 Xoá
               </button>
             </div>
@@ -1432,7 +1545,7 @@
     }
 
     window.removeFile = function(id) {
-      if (state.isProcessing) return;
+      if (state.isProcessing || state.isDownloading) return;
 
       const idx = state.items.findIndex(i => i.id === id);
       if (idx !== -1) {
@@ -1445,7 +1558,7 @@
     };
 
     btnClearList.addEventListener('click', () => {
-      if (state.isProcessing) return;
+      if (state.isProcessing || state.isDownloading) return;
       state.items.forEach(item => {
         if (item.originalUrl) URL.revokeObjectURL(item.originalUrl);
         if (item.convertedUrl) URL.revokeObjectURL(item.convertedUrl);
@@ -1456,13 +1569,19 @@
     });
 
     btnConvertAll.addEventListener('click', async () => {
-      if (state.isProcessing || state.items.length === 0) return;
+      if (state.isProcessing || state.isDownloading || state.items.length === 0) return;
 
-      let itemsToProcess = state.items.filter(i => i.status !== 'completed');
-      if (itemsToProcess.length === 0) {
+      let itemsToProcess;
+      if (state.settingsChanged) {
         itemsToProcess = [...state.items];
+      } else {
+        itemsToProcess = state.items.filter(i => i.status !== 'completed');
+        if (itemsToProcess.length === 0) {
+          itemsToProcess = [...state.items];
+        }
       }
 
+      state.settingsChanged = false;
       state.isProcessing = true;
       updateUI();
       progressWrapper.classList.add('progress-active');
@@ -1472,7 +1591,7 @@
       const targetFormat = document.querySelector('input[name="targetFormat"]:checked').value;
       const quality = parseInt(qualityNumber.value, 10) / 100;
       const resizeMode = document.querySelector('input[name="resizeMode"]:checked').value;
-      const scalePercent = parseInt(scaleNumber.value, 10) || 75;
+      const scalePercent = parseInt(scaleNumber.value, 10) || 50;
 
       let maxEdgeVal = parseInt(maxLongestEdge.value, 10);
       if (isNaN(maxEdgeVal) || maxEdgeVal < 50) maxEdgeVal = 1920;
@@ -1521,7 +1640,6 @@
 
       await Promise.all(activeWorkers);
 
-      // Tính tổng dung lượng chính xác trên danh sách vừa xử lý
       let batchOrigSize = 0;
       let batchNewSize = 0;
       itemsToProcess.forEach(i => {
@@ -1560,13 +1678,26 @@
         }
       }
 
+      // Giới hạn trần Canvas 36MP và cạnh tối đa 16384px cho ảnh Panorama siêu dài
       const MAX_SAFE_PIXELS = 36000000;
+      const MAX_SINGLE_DIM = 16384;
+
       const totalPix = outWidth * outHeight;
       if (totalPix > MAX_SAFE_PIXELS) {
         const scaleDown = Math.sqrt(MAX_SAFE_PIXELS / totalPix);
         outWidth = Math.max(1, Math.round(outWidth * scaleDown));
         outHeight = Math.max(1, Math.round(outHeight * scaleDown));
       }
+
+      const maxDim = Math.max(outWidth, outHeight);
+      if (maxDim > MAX_SINGLE_DIM) {
+        const dimScale = MAX_SINGLE_DIM / maxDim;
+        outWidth = Math.max(1, Math.round(outWidth * dimScale));
+        outHeight = Math.max(1, Math.round(outHeight * dimScale));
+      }
+
+      outWidth = Math.max(1, outWidth);
+      outHeight = Math.max(1, outHeight);
 
       const canvas = document.createElement('canvas');
       canvas.width = outWidth;
@@ -1606,7 +1737,7 @@
         }, options.targetFormat, options.quality);
       });
 
-      // Chỉ khảm EXIF nếu ảnh giữ nguyên kích thước gốc để tránh xung đột thông số phân giải
+      // Chỉ khảm EXIF nếu ảnh giữ nguyên kích thước gốc
       if (options.targetFormat === 'image/jpeg' && outWidth === item.originalWidth && outHeight === item.originalHeight) {
         try {
           convertedBlob = await tryInjectExif(item.file, convertedBlob, options.targetFormat);
@@ -1635,6 +1766,7 @@
       });
     }
 
+    // Khảm EXIF chuẩn quốc tế: Tách bỏ APP0 (JFIF) trước khi gắn APP1 (EXIF)
     async function tryInjectExif(originalFile, newBlob, targetMime) {
       if (targetMime !== 'image/jpeg') return newBlob;
 
@@ -1669,10 +1801,17 @@
       const newView = new DataView(newBuffer);
       if (newView.getUint16(0, false) !== 0xFFD8) return newBlob;
 
+      // Quét khối APP0 (JFIF) trong ảnh mới nén để loại bỏ xung đột
+      let contentStartIndex = 2;
+      if (newView.byteLength > 4 && newView.getUint16(2, false) === 0xFFE0) {
+        const app0Length = newView.getUint16(4, false);
+        contentStartIndex = 2 + 2 + app0Length;
+      }
+
       return new Blob([
-        new Uint8Array(newBuffer.slice(0, 2)),
-        exifSegment,
-        new Uint8Array(newBuffer.slice(2))
+        new Uint8Array(newBuffer.slice(0, 2)), // FF D8 (SOI)
+        exifSegment,                           // FF E1 (APP1 / EXIF)
+        new Uint8Array(newBuffer.slice(contentStartIndex)) // Phần dữ liệu quét ảnh chuẩn
       ], { type: targetMime });
     }
 
@@ -1718,7 +1857,12 @@
 
     btnDownloadAll.addEventListener('click', () => {
       const completedItems = state.items.filter(i => i.status === 'completed' && i.convertedUrl);
-      if (completedItems.length === 0) return;
+      if (completedItems.length === 0 || state.isDownloading) return;
+
+      state.isDownloading = true;
+      btnDownloadAll.disabled = true;
+      btnDownloadText.textContent = 'Đang tải xuống...';
+      updateUI();
 
       if (completedItems.length > 2) {
         showToast(`Đang tải ${completedItems.length} tập tin. Vui lòng chọn "Cho phép" nếu trình duyệt hỏi quyền tải.`);
@@ -1727,6 +1871,13 @@
       completedItems.forEach((item, index) => {
         setTimeout(() => {
           window.downloadSingleFile(item.id);
+          if (index === completedItems.length - 1) {
+            setTimeout(() => {
+              state.isDownloading = false;
+              btnDownloadText.textContent = 'Tải xuống tất cả';
+              updateUI();
+            }, 800);
+          }
         }, index * 500);
       });
     });
@@ -1747,7 +1898,7 @@
       document.body.removeChild(a);
     }
 
-    // BỘ CÔNG CỤ SOI CHI TIẾT (CHUẨN TOẠ ĐỘ & ĐỒNG BỘ PHÍM ZOOM)
+    // BỘ CÔNG CỤ SOI CHI TIẾT (CHUẨN TOẠ ĐỘ VÀ ĐỒNG BỘ NÚT PRESET)
     window.openInspector = function(id) {
       const item = state.items.find(i => i.id === id);
       if (!item) return;
@@ -1760,7 +1911,7 @@
 
       modalFileName.textContent = item.originalName;
       updateCompareButtonUI();
-      updatePresetButtonsUI(1.0 / dpr);
+      updatePresetButtonsUI(state.inspector.zoom);
 
       fullscreenInspectorModal.classList.add('active');
       renderInspectorImage(true);
@@ -1788,13 +1939,10 @@
       const nextW = nextIsConverted ? item.convertedWidth : item.originalWidth;
       const nextH = nextIsConverted ? item.convertedHeight : item.originalHeight;
 
-      // Cân chỉnh toạ độ giữ nguyên tầm ngắm trực quan
-      if (prevW > 0 && nextW > 0 && prevW !== nextW) {
+      // Giữ nguyên toạ độ tâm ngắm tương đối trên ảnh
+      if (prevW > 0 && nextW > 0) {
         const u = (centerX - state.inspector.panX) / (prevW * state.inspector.zoom);
         const v = (centerY - state.inspector.panY) / (prevH * state.inspector.zoom);
-
-        const ratio = prevW / nextW;
-        state.inspector.zoom = state.inspector.zoom * ratio;
 
         state.inspector.panX = centerX - u * (nextW * state.inspector.zoom);
         state.inspector.panY = centerY - v * (nextH * state.inspector.zoom);
@@ -2064,7 +2212,7 @@
     });
 
     syncQuality(93);
-    syncScale(75);
+    syncScale(50);
     updateUI();
   </script>
 </body>
