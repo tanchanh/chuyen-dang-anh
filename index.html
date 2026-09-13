@@ -182,12 +182,15 @@
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 0.25rem;
+      min-width: 0;
     }
 
     .radio-pill-group {
       display: flex;
       flex-wrap: wrap;
       gap: 0.35rem;
+      width: 100%;
+      min-width: 0;
     }
 
     .radio-pill-label {
@@ -211,19 +214,22 @@
       accent-color: var(--color-accent);
     }
 
-    /* BỐ CỤC ĐIỀU KHIỂN: Ô SỐ TRÊN, THANH TRƯỢT DƯỚI */
+    /* BỐ CỤC ĐIỀU KHIỂN: Ô SỐ TRÊN, THANH TRƯỢT DƯỚI - CHỐNG TRÀN */
     .control-header-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 0.5rem;
+      flex-wrap: wrap;
+      gap: 0.35rem 0.5rem;
       width: 100%;
+      min-width: 0;
     }
 
     .input-unit-group {
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
+      flex-shrink: 0;
     }
 
     .range-slider-full {
@@ -244,6 +250,7 @@
       font-size: 1.15rem;
       padding: 0.3rem;
       text-align: center;
+      max-width: 100%;
     }
 
     .number-input:focus {
@@ -265,10 +272,14 @@
       align-items: center;
       gap: 0.4rem;
       flex-wrap: wrap;
+      width: 100%;
+      min-width: 0;
     }
 
     .dimension-sub-panel {
       margin-top: 0.5rem;
+      width: 100%;
+      min-width: 0;
     }
 
     .dimension-sub-panel.dimension-panel-hidden {
@@ -285,6 +296,8 @@
     .dimension-note {
       font-size: 0.95rem;
       color: var(--color-border);
+      width: 100%;
+      min-width: 0;
     }
 
     .preset-scale-buttons {
@@ -292,6 +305,8 @@
       gap: 0.35rem;
       flex-wrap: wrap;
       margin-top: 0.45rem;
+      width: 100%;
+      min-width: 0;
     }
 
     .preset-btn {
@@ -311,23 +326,27 @@
       background-color: var(--color-primary);
     }
 
-    /* NÚT BẤM */
+    /* NÚT BẤM - CHỐNG TRÀN VIỀN MÀN HÌNH NHỎ */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 0.35rem;
       font-family: var(--font-family);
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: bold;
       border-radius: 0.4rem;
       border: 2px solid transparent;
-      padding: 0.6rem 0.9rem;
+      padding: 0.6rem 0.75rem;
       cursor: pointer;
       user-select: none;
       color: var(--color-white);
       pointer-events: auto;
-      white-space: nowrap;
+      white-space: normal;
+      text-align: center;
+      line-height: 1.3;
+      max-width: 100%;
+      min-width: 0;
     }
 
     .btn:disabled {
@@ -378,7 +397,7 @@
 
     .btn-small {
       font-size: 1rem;
-      padding: 0.4rem 0.7rem;
+      padding: 0.4rem 0.65rem;
     }
 
     /* NÚT CÔNG TẮC: ẢNH GỐC / ẢNH NÉN */
@@ -418,11 +437,14 @@
       gap: 0.5rem;
       flex-wrap: wrap;
       margin-bottom: 0.75rem;
+      width: 100%;
+      min-width: 0;
     }
 
     @media (max-width: 36rem) {
       .action-toolbar .btn {
         flex: 1 1 100%;
+        width: 100%;
       }
     }
 
@@ -430,6 +452,8 @@
     .progress-wrapper {
       margin-bottom: 0.75rem;
       display: none;
+      width: 100%;
+      min-width: 0;
     }
 
     .progress-wrapper.progress-active {
@@ -457,6 +481,7 @@
       margin-top: 0.3rem;
       display: flex;
       justify-content: space-between;
+      min-width: 0;
     }
 
     /* DANH SÁCH TẬP TIN */
@@ -479,6 +504,8 @@
       text-align: center;
       color: var(--color-border);
       background-color: var(--color-dark-surface);
+      width: 100%;
+      min-width: 0;
     }
 
     .empty-state.state-hidden {
@@ -506,6 +533,7 @@
       align-items: flex-start;
       gap: 0.6rem;
       width: 100%;
+      max-width: 100%;
       min-width: 0;
       overflow: hidden;
     }
@@ -561,6 +589,7 @@
       font-size: 1rem;
       word-break: normal;
       overflow-wrap: break-word;
+      min-width: 0;
     }
 
     .status-badge {
@@ -592,10 +621,12 @@
       background-color: var(--color-dark-surface);
       border: 2px solid var(--color-border);
       border-radius: 0.4rem;
-      padding: 0.8rem;
+      padding: 0.6rem;
       margin-top: 1.25rem;
       width: 100%;
+      max-width: 100%;
       min-width: 0;
+      overflow: hidden;
     }
 
     .quality-info-title {
@@ -604,6 +635,7 @@
       color: var(--color-accent);
       margin-bottom: 0.75rem;
       text-align: left;
+      min-width: 0;
     }
 
     .quality-grid {
@@ -628,6 +660,10 @@
       display: flex;
       flex-direction: column;
       gap: 0.35rem;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      overflow: hidden;
     }
 
     .quality-card-heading {
@@ -635,6 +671,9 @@
       font-weight: bold;
       color: var(--color-accent);
       line-height: 1.35;
+      word-break: normal;
+      overflow-wrap: break-word;
+      min-width: 0;
     }
 
     .quality-card-content {
@@ -644,6 +683,7 @@
       line-height: 1.5;
       word-break: normal;
       overflow-wrap: break-word;
+      min-width: 0;
     }
 
     /* MODAL SOI CHI TIẾT */
@@ -670,6 +710,7 @@
       background-color: var(--color-dark-surface);
       border-bottom: 2px solid var(--color-border);
       padding: 0.4rem 0.5rem;
+      width: 100%;
       min-width: 0;
     }
 
@@ -678,6 +719,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 0.5rem;
+      width: 100%;
       min-width: 0;
     }
 
@@ -697,6 +739,8 @@
       align-items: center;
       gap: 0.25rem;
       flex-wrap: wrap;
+      width: 100%;
+      min-width: 0;
     }
 
     .modal-viewport {
@@ -955,21 +999,21 @@
       <div class="quality-card">
         <div class="quality-card-heading">3. Thuật toán nội suy chất lượng cao (High Smoothing Quality)</div>
         <div class="quality-card-content">
-          Tích hợp bộ lọc nội suy đa điểm cao cấp trên Canvas (imageSmoothingQuality = 'high'), giúp tính toán mượt mà các điểm ảnh khi co nhỏ, loại bỏ hoàn toàn hiện tượng răng cưa, vỡ hạt hay bậc thang ở các đường viền chi tiết.
+          Tích hợp bộ lọc nội suy đa điểm cao cấp trên Canvas (imageSmoothingQuality: high), giúp tính toán mượt mà các điểm ảnh khi co nhỏ, loại bỏ hoàn toàn hiện tượng răng cưa, vỡ hạt hay bậc thang ở các đường viền chi tiết.
         </div>
       </div>
 
       <div class="quality-card">
         <div class="quality-card-heading">4. Chuẩn hoá không gian màu chuẩn (sRGB Color Space)</div>
         <div class="quality-card-content">
-          Khởi tạo bề mặt vẽ với không gian màu sRGB chuyên biệt (colorSpace: 'srgb'), đảm bảo màu sắc sau khi chuyển đổi luôn trung thực, không bị xỉn màu hay lệch sắc độ trên các màn hình dải màu rộng (DCI-P3, Retina).
+          Khởi tạo bề mặt vẽ với không gian màu sRGB chuyên biệt (colorSpace: srgb), đảm bảo màu sắc sau khi chuyển đổi luôn trung thực, không bị xỉn màu hay lệch sắc độ trên các màn hình dải màu rộng (DCI-P3, Retina).
         </div>
       </div>
 
       <div class="quality-card">
         <div class="quality-card-heading">5. Giải mã ảnh tận dụng phần cứng (Hardware Acceleration)</div>
         <div class="quality-card-content">
-          Ưu tiên sử dụng API createImageBitmap với khả năng tự động nhận diện góc xoay cảm biến (imageOrientation: 'from-image') và xử lý đa luồng qua GPU/CPU, giúp ảnh hiển thị sắc nét tự nhiên và đúng chiều vật lý.
+          Ưu tiên sử dụng API createImageBitmap với khả năng tự động nhận diện góc xoay cảm biến (imageOrientation: from-image) và xử lý đa luồng qua GPU/CPU, giúp ảnh hiển thị sắc nét tự nhiên và đúng chiều vật lý.
         </div>
       </div>
 
@@ -1263,12 +1307,14 @@
 
     let dragCounter = 0;
     window.addEventListener('dragenter', (e) => {
+      if (fullscreenInspectorModal.classList.contains('active')) return;
       e.preventDefault();
       dragCounter++;
       dropZone.classList.add('drag-over');
     });
 
     window.addEventListener('dragleave', (e) => {
+      if (fullscreenInspectorModal.classList.contains('active')) return;
       e.preventDefault();
       dragCounter--;
       if (dragCounter <= 0 || e.clientX <= 0 || e.clientY <= 0 || e.clientX >= window.innerWidth || e.clientY >= window.innerHeight) {
@@ -1283,10 +1329,12 @@
     });
 
     window.addEventListener('dragover', (e) => {
+      if (fullscreenInspectorModal.classList.contains('active')) return;
       e.preventDefault();
     });
 
     window.addEventListener('drop', (e) => {
+      if (fullscreenInspectorModal.classList.contains('active')) return;
       e.preventDefault();
       dragCounter = 0;
       dropZone.classList.remove('drag-over');
@@ -1296,6 +1344,8 @@
     });
 
     window.addEventListener('paste', (e) => {
+      // Bỏ qua dán nếu Modal đang mở hoặc đang nhập văn bản
+      if (fullscreenInspectorModal.classList.contains('active')) return;
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
         return;
       }
@@ -1597,7 +1647,9 @@
       if (isNaN(maxEdgeVal) || maxEdgeVal < 50) maxEdgeVal = 1920;
 
       const totalCount = itemsToProcess.length;
-      let completedCount = 0;
+      let processedCount = 0;
+      let successCount = 0;
+      let errorCount = 0;
 
       progressStatusText.textContent = `Đang chuyển đổi ${totalCount} ảnh...`;
 
@@ -1619,17 +1671,19 @@
               maxLongestEdge: maxEdgeVal
             });
             item.status = 'completed';
+            successCount++;
           } catch (err) {
             console.error(err);
             item.status = 'error';
             item.errorMessage = err.message || 'Lỗi xử lý';
+            errorCount++;
           }
 
-          completedCount++;
-          const percent = Math.round((completedCount / totalCount) * 100);
+          processedCount++;
+          const percent = Math.round((processedCount / totalCount) * 100);
           progressBarFill.style.width = `${percent}%`;
           progressPercentText.textContent = `${percent}%`;
-          progressStatusText.textContent = `Đang hoàn thành ${completedCount} / ${totalCount} ảnh...`;
+          progressStatusText.textContent = `Đang hoàn thành ${processedCount} / ${totalCount} ảnh...`;
           renderFileList();
         }
       }
@@ -1650,15 +1704,23 @@
       });
 
       state.isProcessing = false;
-      if (batchOrigSize > 0 && batchNewSize > 0) {
+      if (successCount > 0 && batchOrigSize > 0 && batchNewSize > 0) {
         const totalSaved = Math.max(0, ((batchOrigSize - batchNewSize) / batchOrigSize) * 100).toFixed(1);
-        progressStatusText.textContent = `Đã nén ${completedCount} ảnh: ${formatBytes(batchOrigSize)} → ${formatBytes(batchNewSize)} (Tiết kiệm ${totalSaved}%)`;
+        progressStatusText.textContent = `Đã nén ${successCount} ảnh: ${formatBytes(batchOrigSize)} → ${formatBytes(batchNewSize)} (Tiết kiệm ${totalSaved}%)`;
+      } else if (errorCount === totalCount) {
+        progressStatusText.textContent = `Xử lý thất bại toàn bộ ${errorCount} ảnh!`;
       } else {
-        progressStatusText.textContent = `Chuyển đổi hoàn tất ${completedCount} ảnh!`;
+        progressStatusText.textContent = `Hoàn tất: ${successCount} thành công, ${errorCount} lỗi!`;
       }
 
       updateUI();
-      showToast(`Chuyển đổi thành công ${completedCount} ảnh!`);
+      if (errorCount === 0) {
+        showToast(`Chuyển đổi thành công ${successCount} ảnh!`);
+      } else if (successCount === 0) {
+        showToast(`Chuyển đổi thất bại toàn bộ ${errorCount} ảnh!`, true);
+      } else {
+        showToast(`Hoàn tất: ${successCount} ảnh thành công, ${errorCount} ảnh lỗi!`, true);
+      }
     });
 
     async function convertSingleImage(item, options) {
@@ -1737,6 +1799,10 @@
         }, options.targetFormat, options.quality);
       });
 
+      // Giải phóng bộ nhớ đệm VRAM phần cứng ngay lập tức
+      canvas.width = 0;
+      canvas.height = 0;
+
       // Chỉ khảm EXIF nếu ảnh giữ nguyên kích thước gốc
       if (options.targetFormat === 'image/jpeg' && outWidth === item.originalWidth && outHeight === item.originalHeight) {
         try {
@@ -1766,7 +1832,7 @@
       });
     }
 
-    // Khảm EXIF chuẩn quốc tế: Tách bỏ APP0 (JFIF) trước khi gắn APP1 (EXIF)
+    // Khảm EXIF chuẩn quốc tế: Tách bỏ APP0 (JFIF) và kiểm tra đúng header "Exif\0\0"
     async function tryInjectExif(originalFile, newBlob, targetMime) {
       if (targetMime !== 'image/jpeg') return newBlob;
 
@@ -1785,8 +1851,21 @@
         if (marker === 0xFFDA || length < 2) break;
 
         if (marker === 0xFFE1) {
-          exifSegment = origBuffer.slice(offset, offset + 2 + length);
-          break;
+          // Kiểm tra đúng 6 bytes định danh "Exif\0\0" để loại trừ Adobe XMP
+          if (offset + 10 <= origView.byteLength) {
+            const isExifHeader = 
+              origView.getUint8(offset + 4) === 0x45 && // 'E'
+              origView.getUint8(offset + 5) === 0x78 && // 'x'
+              origView.getUint8(offset + 6) === 0x69 && // 'i'
+              origView.getUint8(offset + 7) === 0x66 && // 'f'
+              origView.getUint8(offset + 8) === 0x00 &&
+              origView.getUint8(offset + 9) === 0x00;
+
+            if (isExifHeader) {
+              exifSegment = origBuffer.slice(offset, offset + 2 + length);
+              break;
+            }
+          }
         }
 
         if ((marker & 0xFF00) !== 0xFF00) break;
@@ -2132,7 +2211,20 @@
         modalViewport.releasePointerCapture(e.pointerId);
       } catch (err) {}
 
-      if (touchState.pointers.size === 1) {
+      // Xử lý chuyển đổi mượt khi nhấc ngón tay, chống giật mức phóng đại
+      if (touchState.pointers.size === 2) {
+        const pts = Array.from(touchState.pointers.values());
+        touchState.initialDist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+
+        const rect = modalViewport.getBoundingClientRect();
+        touchState.initialMidX = (pts[0].x + pts[1].x) / 2 - rect.left;
+        touchState.initialMidY = (pts[0].y + pts[1].y) / 2 - rect.top;
+
+        touchState.initialZoom = state.inspector.zoom;
+        touchState.initialPanX = state.inspector.panX;
+        touchState.initialPanY = state.inspector.panY;
+        state.inspector.isPanning = false;
+      } else if (touchState.pointers.size === 1) {
         const remaining = Array.from(touchState.pointers.values())[0];
         state.inspector.isPanning = true;
         state.inspector.startX = remaining.x - state.inspector.panX;
