@@ -326,7 +326,7 @@
       background-color: var(--color-primary);
     }
 
-    /* NÚT BẤM - CHỐNG TRÀN VIỀN MÀN HÌNH NHỎ */
+    /* NÚT BẤM - CHỐNG TRÀN VIỀN */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -1344,7 +1344,6 @@
     });
 
     window.addEventListener('paste', (e) => {
-      // Bỏ qua dán nếu Modal đang mở hoặc đang nhập văn bản
       if (fullscreenInspectorModal.classList.contains('active')) return;
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
         return;
@@ -1851,7 +1850,6 @@
         if (marker === 0xFFDA || length < 2) break;
 
         if (marker === 0xFFE1) {
-          // Kiểm tra đúng 6 bytes định danh "Exif\0\0" để loại trừ Adobe XMP
           if (offset + 10 <= origView.byteLength) {
             const isExifHeader = 
               origView.getUint8(offset + 4) === 0x45 && // 'E'
@@ -1880,7 +1878,6 @@
       const newView = new DataView(newBuffer);
       if (newView.getUint16(0, false) !== 0xFFD8) return newBlob;
 
-      // Quét khối APP0 (JFIF) trong ảnh mới nén để loại bỏ xung đột
       let contentStartIndex = 2;
       if (newView.byteLength > 4 && newView.getUint16(2, false) === 0xFFE0) {
         const app0Length = newView.getUint16(4, false);
@@ -1890,7 +1887,7 @@
       return new Blob([
         new Uint8Array(newBuffer.slice(0, 2)), // FF D8 (SOI)
         exifSegment,                           // FF E1 (APP1 / EXIF)
-        new Uint8Array(newBuffer.slice(contentStartIndex)) // Phần dữ liệu quét ảnh chuẩn
+        new Uint8Array(newBuffer.slice(contentStartIndex))
       ], { type: targetMime });
     }
 
@@ -1923,6 +1920,151 @@
       }
     }
 
+    // ==========================================================================
+    // THUẬT TOÁN ĐÓNG GÓI TẬP TIN ZIP THUẦN (STORE METHOD 0) - DƯƠNG TẤN CHÁNH
+    // ==========================================================================
+
+    let crcTableCache = null;
+    function getCrcTable() {
+      if (crcTableCache) return crcTableCache;
+      crcTableCache = new Uint32Array(256);
+      for (let n = 0; n < 256; n++) {
+        let c = n;
+        for (let k = 0; k < 8; k++) {
+          c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+        }
+        crcTableCache[n] = c;
+      }
+      return crcTableCache;
+    }
+
+    function computeCrc32(uint8Array) {
+      const table = getCrcTable();
+      let crc = 0xFFFFFFFF;
+      for (let i = 0; i < uint8Array.length; i++) {
+        crc = table[(crc ^ uint8Array[i]) & 0xFF] ^ (crc >>> 8);
+      }
+      return (crc ^ 0xFFFFFFFF) >>> 0;
+    }
+
+    function getDosTimeAndDate(d = new Date()) {
+      const time = ((d.getHours() & 0x1F) << 11) | ((d.getMinutes() & 0x3F) << 5) | ((Math.floor(d.getSeconds() / 2)) & 0x1F);
+      const date = (((d.getFullYear() - 1980) & 0x7F) << 9) | (((d.getMonth() + 1) & 0x0F) << 5) | (d.getDate() & 0x1F);
+      return { time, date };
+    }
+
+    function generateUniqueFileNames(items) {
+      const nameCounts = new Map();
+      return items.map(item => {
+        const ext = getExtensionFromMime(item.convertedFormat);
+        const rawBase = item.originalName.substring(0, item.originalName.lastIndexOf('.')) || item.originalName;
+        const cleanBase = rawBase.trim() || 'anh';
+        const candidate = `${cleanBase}.${ext}`;
+
+        if (!nameCounts.has(candidate)) {
+          nameCounts.set(candidate, 1);
+          return { item, filename: candidate };
+        } else {
+          const count = nameCounts.get(candidate);
+          nameCounts.set(candidate, count + 1);
+          return { item, filename: `${cleanBase} (${count}).${ext}` };
+        }
+      });
+    }
+
+    async function buildNativeZipBlob(itemsToZip) {
+      const textEncoder = new TextEncoder();
+      const filesWithNames = generateUniqueFileNames(itemsToZip);
+      const { time: dosTime, date: dosDate } = getDosTimeAndDate();
+
+      const zipParts = [];
+      const centralDirRecords = [];
+      let currentOffset = 0;
+
+      for (let i = 0; i < filesWithNames.length; i++) {
+        const { item, filename } = filesWithNames[i];
+        const filenameBytes = textEncoder.encode(filename);
+        const fileBuffer = await item.convertedBlob.arrayBuffer();
+        const fileBytes = new Uint8Array(fileBuffer);
+        const crc = computeCrc32(fileBytes);
+        const size = fileBytes.length;
+
+        // Local File Header: 30 bytes + filename
+        const localHeader = new Uint8Array(30);
+        const lhView = new DataView(localHeader.buffer);
+        lhView.setUint32(0, 0x04034B50, true); // PK\x03\x04
+        lhView.setUint16(4, 20, true);         // Version 2.0
+        lhView.setUint16(6, 0x0800, true);     // Bit flag 11: UTF-8
+        lhView.setUint16(8, 0, true);          // Store (no compression)
+        lhView.setUint16(10, dosTime, true);
+        lhView.setUint16(12, dosDate, true);
+        lhView.setUint32(14, crc, true);
+        lhView.setUint32(18, size, true);      // Compressed size
+        lhView.setUint32(22, size, true);      // Uncompressed size
+        lhView.setUint16(26, filenameBytes.length, true);
+        lhView.setUint16(28, 0, true);         // Extra field length
+
+        zipParts.push(localHeader, filenameBytes, fileBytes);
+
+        // Lưu thông tin cho Central Directory
+        centralDirRecords.push({
+          filenameBytes,
+          crc,
+          size,
+          offset: currentOffset
+        });
+
+        currentOffset += localHeader.length + filenameBytes.length + fileBytes.length;
+      }
+
+      // Xây dựng Central Directory
+      const centralDirStartOffset = currentOffset;
+      let centralDirSize = 0;
+
+      for (let i = 0; i < centralDirRecords.length; i++) {
+        const rec = centralDirRecords[i];
+        const cdRecord = new Uint8Array(46);
+        const cdView = new DataView(cdRecord.buffer);
+
+        cdView.setUint32(0, 0x02014B50, true); // PK\x01\x02
+        cdView.setUint16(4, 20, true);         // Version made by
+        cdView.setUint16(6, 20, true);         // Version needed
+        cdView.setUint16(8, 0x0800, true);     // Bit flag 11: UTF-8
+        cdView.setUint16(10, 0, true);         // Store
+        cdView.setUint16(12, dosTime, true);
+        cdView.setUint16(14, dosDate, true);
+        cdView.setUint32(16, rec.crc, true);
+        cdView.setUint32(20, rec.size, true);
+        cdView.setUint32(24, rec.size, true);
+        cdView.setUint16(28, rec.filenameBytes.length, true);
+        cdView.setUint16(30, 0, true);         // Extra field length
+        cdView.setUint16(32, 0, true);         // Comment length
+        cdView.setUint16(34, 0, true);         // Disk start
+        cdView.setUint16(36, 0, true);         // Internal attr
+        cdView.setUint32(38, 0, true);         // External attr
+        cdView.setUint32(42, rec.offset, true);// Offset of Local Header
+
+        zipParts.push(cdRecord, rec.filenameBytes);
+        centralDirSize += cdRecord.length + rec.filenameBytes.length;
+      }
+
+      // End of Central Directory (EOCD): 22 bytes
+      const eocd = new Uint8Array(22);
+      const eocdView = new DataView(eocd.buffer);
+      eocdView.setUint32(0, 0x06054B50, true); // PK\x05\x06
+      eocdView.setUint16(4, 0, true);          // Disk number
+      eocdView.setUint16(6, 0, true);          // Central dir disk
+      eocdView.setUint16(8, centralDirRecords.length, true);
+      eocdView.setUint16(10, centralDirRecords.length, true);
+      eocdView.setUint32(12, centralDirSize, true);
+      eocdView.setUint32(16, centralDirStartOffset, true);
+      eocdView.setUint16(20, 0, true);         // Comment length
+
+      zipParts.push(eocd);
+
+      return new Blob(zipParts, { type: 'application/zip' });
+    }
+
     window.downloadSingleFile = function(id) {
       const item = state.items.find(i => i.id === id);
       if (!item || !item.convertedBlob) return;
@@ -1934,31 +2076,64 @@
       triggerDownload(item.convertedUrl, downloadName);
     };
 
-    btnDownloadAll.addEventListener('click', () => {
-      const completedItems = state.items.filter(i => i.status === 'completed' && i.convertedUrl);
+    // TẢI XUỐNG TẤT CẢ VỚI CƠ CHẾ DỰ PHÒNG 2 TẦNG (ZIP & TUẦN TỰ)
+    btnDownloadAll.addEventListener('click', async () => {
+      const completedItems = state.items.filter(i => i.status === 'completed' && i.convertedUrl && i.convertedBlob);
       if (completedItems.length === 0 || state.isDownloading) return;
 
       state.isDownloading = true;
       btnDownloadAll.disabled = true;
+      btnClearList.disabled = true;
       btnDownloadText.textContent = 'Đang tải xuống...';
       updateUI();
 
-      if (completedItems.length > 2) {
-        showToast(`Đang tải ${completedItems.length} tập tin. Vui lòng chọn "Cho phép" nếu trình duyệt hỏi quyền tải.`);
+      // Nếu chỉ có đúng 1 ảnh: tải trực tiếp không cần ZIP
+      if (completedItems.length === 1) {
+        window.downloadSingleFile(completedItems[0].id);
+        state.isDownloading = false;
+        btnDownloadText.textContent = 'Tải xuống tất cả';
+        updateUI();
+        return;
       }
 
-      completedItems.forEach((item, index) => {
+      // TẦNG 1: ĐÓNG GÓI ZIP NHỊ PHÂN THUẦN
+      try {
+        showToast(`Đang gộp ${completedItems.length} tập tin vào file ZIP...`);
+        const zipBlob = await buildNativeZipBlob(completedItems);
+        const zipUrl = URL.createObjectURL(zipBlob);
+
+        const now = new Date();
+        const dateTag = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+        const zipFileName = `anh_chuyen_doi_${dateTag}.zip`;
+
+        triggerDownload(zipUrl, zipFileName);
+
         setTimeout(() => {
-          window.downloadSingleFile(item.id);
-          if (index === completedItems.length - 1) {
-            setTimeout(() => {
-              state.isDownloading = false;
-              btnDownloadText.textContent = 'Tải xuống tất cả';
-              updateUI();
-            }, 800);
-          }
-        }, index * 500);
-      });
+          URL.revokeObjectURL(zipUrl);
+          state.isDownloading = false;
+          btnDownloadText.textContent = 'Tải xuống tất cả';
+          updateUI();
+          showToast(`Đã tải xuống thành công tập tin ZIP!`);
+        }, 1000);
+
+      } catch (zipErr) {
+        // TẦNG 2: DỰ PHÒNG CỨU NGUY (FALLBACK SANG TẢI LẦN LƯỢT TỪNG ẢNH)
+        console.warn('Lỗi đóng gói ZIP, chuyển sang tải tuần tự:', zipErr);
+        showToast('Không thể tạo file ZIP, đang chuyển sang tải lần lượt từng ảnh...', true);
+
+        completedItems.forEach((item, index) => {
+          setTimeout(() => {
+            window.downloadSingleFile(item.id);
+            if (index === completedItems.length - 1) {
+              setTimeout(() => {
+                state.isDownloading = false;
+                btnDownloadText.textContent = 'Tải xuống tất cả';
+                updateUI();
+              }, 800);
+            }
+          }, index * 500);
+        });
+      }
     });
 
     function getExtensionFromMime(mime) {
@@ -2018,7 +2193,6 @@
       const nextW = nextIsConverted ? item.convertedWidth : item.originalWidth;
       const nextH = nextIsConverted ? item.convertedHeight : item.originalHeight;
 
-      // Giữ nguyên toạ độ tâm ngắm tương đối trên ảnh
       if (prevW > 0 && nextW > 0) {
         const u = (centerX - state.inspector.panX) / (prevW * state.inspector.zoom);
         const v = (centerY - state.inspector.panY) / (prevH * state.inspector.zoom);
@@ -2211,7 +2385,6 @@
         modalViewport.releasePointerCapture(e.pointerId);
       } catch (err) {}
 
-      // Xử lý chuyển đổi mượt khi nhấc ngón tay, chống giật mức phóng đại
       if (touchState.pointers.size === 2) {
         const pts = Array.from(touchState.pointers.values());
         touchState.initialDist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
